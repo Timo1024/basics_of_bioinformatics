@@ -203,6 +203,10 @@ def reverse_sequence_order_and_save_reverse_comlements(file, filename):
     # creates new File
     f = open(filename, "w")
 
+    # reverse heading_array and reverse_complement_array
+    heading_array = heading_array[::-1]
+    reverse_complement_array = reverse_complement_array[::-1]
+
     # adding headings and sequences to new file
     count = 0
     for heading in heading_array:
@@ -217,7 +221,7 @@ def reverse_sequence_order_and_save_reverse_comlements(file, filename):
     f.close()
 
     print("the reverse complement of the sequences were saved as", filename)
-        
+
 
 def main():
     '''
