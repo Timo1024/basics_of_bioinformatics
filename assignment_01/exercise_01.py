@@ -74,6 +74,7 @@ def main():
 
 
 if __name__ == "__main__":
+    # FIXME uncomment the try and except Part
     # try:
         args = create_parser()
         # accesing the path of the files
