@@ -10,8 +10,8 @@ def count_nucleotides(file):
     with open(file) as file_content:
 
         # initialize varibles
-        count_nucleotides = 0;
-        name_of_sequence = "";
+        count_nucleotides = 0
+        name_of_sequence = ""
 
         # loops through all lines in the given file
         for line in file_content:
@@ -20,13 +20,13 @@ def count_nucleotides(file):
             # every next start of the next sequence the program prints the result of the last sequence
             if(line.startswith('>')):
                 if((count_nucleotides != 0) and (name_of_sequence != "")):
-                    print("length of", name_of_sequence[:name_of_sequence.rfind("\n")], "=", count_nucleotides);
+                    print("length of", name_of_sequence[:name_of_sequence.rfind("\n")], "=", count_nucleotides)
                     
                     # resetting the count of nucleotides for the next sequence
-                    count_nucleotides = 0;
+                    count_nucleotides = 0
                 
                 # saves the name of the next sequence for later, when ist printed out
-                name_of_sequence = line;
+                name_of_sequence = line
 
             # if the line doesnt start with a ">", the program counts the nucleotides in the line
             # add adds them to the nucleotide count   
@@ -36,12 +36,12 @@ def count_nucleotides(file):
                     # checks if the current char is one of the nucleotides
                     # this prevents the linebreak to count as a nucleotide
                     if k in ["A", "T", "G", "C"]:
-                        count_nucleotides = count_nucleotides + 1;
+                        count_nucleotides = count_nucleotides + 1
 
         # prints the length of the last nucleotide sequence
         if((count_nucleotides != 0) and (name_of_sequence != "")):
-            print("length of", name_of_sequence[:name_of_sequence.rfind("\n")], "=", count_nucleotides);
-            count_nucleotides = 0;
+            print("length of", name_of_sequence[:name_of_sequence.rfind("\n")], "=", count_nucleotides)
+            count_nucleotides = 0
 
 def create_parser():
     '''
@@ -66,7 +66,7 @@ def main():
     '''
     # T2.a
 
-    count_nucleotides(args.file_one);
+    count_nucleotides(args.file_one)
 
     # TODO T3
 
