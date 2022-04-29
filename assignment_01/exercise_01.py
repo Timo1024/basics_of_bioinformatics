@@ -112,6 +112,44 @@ def create_parser():
 
     return(p.parse_args())
 
+def write_new_file(file, filename):
+    '''
+    uses the given file to get the headers
+    then the user can set the sequences for these headers in the command line
+    then the file is saved as a new file named filename
+    '''
+
+
+    # saves all headings
+    heading_array = []
+    with open(file) as file_content:
+        for line in file_content:
+            if(line.startswith(">")):
+                heading_array.append(line)
+
+    # creates new File
+    f = open(filename, "w")
+
+    # user can type the new sequences and the heading and the new sequences
+    # are added to the new file
+    for heading in heading_array:
+        f.write(heading)
+        cons_output = "Type the new Sequence for"
+        cons_output += heading
+
+        # checks if input is a correct sequence
+        correct_input = False
+        while not correct_input:
+            new_sequence = input(cons_output)
+            correct_input = check_if_valid_chars(["A", "T", "G", "C"], new_sequence)
+        new_sequence += "\n"
+        f.write(new_sequence)
+
+    f.close()
+
+    print("your new file was saved as", filename)
+
+    
 
 def main():
     '''
@@ -119,8 +157,14 @@ def main():
     '''
     # T2.a
 
-    if(check_if_fasta(args.file_one)):
-        count_nucleotides(args.file_one)
+    new_file_name = "MultipleSeqsReverse.fasta"
+    file1 = args.file_one
+
+    if(check_if_fasta(file1)):
+        count_nucleotides(file1)
+        if(not new_file_name.endswith(".fasta")):
+            new_file_name += ".fasta"
+        write_new_file(file1, new_file_name)
     else:
         print("wrong file format. Please insert a .fasta file")
 
