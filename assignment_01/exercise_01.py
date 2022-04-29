@@ -1,6 +1,9 @@
 import argparse
 from asyncio.windows_events import NULL
 from itertools import count
+from msilib import sequence
+from unittest import case
+import math
 
 def check_if_valid_chars(char_array, string, linebreak = True):
     '''
@@ -149,7 +152,72 @@ def write_new_file(file, filename):
 
     print("your new file was saved as", filename)
 
-    
+def make_reverse_complement(sequence):
+    '''
+    makes the reverse complement of a sequence
+    '''
+
+    # reverse the sequence
+    sequence = sequence[::-1]
+
+    # changes every letter with the reverse letter
+    new_sequence = ""
+    for base in sequence:
+        if(base == "A"):
+            new_sequence += "T"
+        elif(base == "T"):
+            new_sequence += "A"
+        elif(base == "G"):
+            new_sequence += "C"
+        else:
+            new_sequence += "G"
+
+    return new_sequence
+
+
+def reverse_sequence_order_and_save_reverse_comlements(file, filename):
+    '''
+    reverses the order of the sequences and saves the reverse complement of the
+    sequences
+    '''
+
+    # saves all headings and sequences in two arrays
+    heading_array  = []
+    sequence_array = []
+    with open(file) as file_content:
+        for line in file_content:
+            line = line[:line.rfind("\n")]
+            if(line.startswith(">")):
+                heading_array.append(line)
+            else:
+                if(len(sequence_array) != len(heading_array)):
+                    sequence_array.append([])
+                sequence_array[len(heading_array)-1].append(line)
+
+    # makes the reverse complement of all sequences
+    reverse_complement_array = []
+    for sequence in sequence_array:
+        sequence = "".join(sequence)
+        reverse_complement_array.append(make_reverse_complement(sequence))
+
+    # creates new File
+    f = open(filename, "w")
+
+    # adding headings and sequences to new file
+    count = 0
+    for heading in heading_array:
+        heading += "\n"
+        f.write(heading)
+        sequence = reverse_complement_array[count]
+        sequence = '\n'.join(sequence[i:i+60] for i in range(0, len(sequence), 60))
+        sequence += "\n"
+        f.write(sequence)
+        count += 1
+
+    f.close()
+
+    print("the reverse complement of the sequences were saved as", filename)
+        
 
 def main():
     '''
@@ -165,6 +233,7 @@ def main():
         if(not new_file_name.endswith(".fasta")):
             new_file_name += ".fasta"
         # write_new_file(file1, new_file_name)
+        reverse_sequence_order_and_save_reverse_comlements(file1, "MultipleSeqsReverse.fasta")
     else:
         print("wrong file format. Please insert a .fasta file")
 
