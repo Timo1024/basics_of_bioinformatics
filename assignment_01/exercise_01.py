@@ -2,6 +2,59 @@ import argparse
 from asyncio.windows_events import NULL
 from itertools import count
 
+def check_if_valid_chars(char_array, string, linebreak = True):
+    '''
+    checks if the string is made of the alphabet char_array
+    '''
+
+    # if linebreaks at the end are allowed then add "\n" to the alphabet
+    if(linebreak):
+        char_array.append("\n")
+
+    # checks if every char in the string is correct
+    for char in string:
+        if not char in char_array:
+            return False
+    
+    return True
+
+def check_if_fasta(file):
+    '''
+    checks if the file is a valid .fasta file
+    '''
+
+    # init variables
+    counter = 0
+    not_valid = True
+    old_line = ""
+
+    with open(file) as file_content:
+        for line in file_content:
+
+            # checks whether the first line is a header
+            if counter == 0:
+                if(not line.startswith(">")):
+                    return False
+
+            # if the last line was a header the following line can't be a header
+            if(old_line.startswith(">")):
+                if(line.startswith(">")):
+                    return False
+
+            # check if the chars in a line of the sequence are valid
+            if(not line.startswith(">")):
+                if(not check_if_valid_chars(["A", "T", "G", "C"], line)):
+                    return False
+            
+            old_line = line
+            counter = counter + 1
+
+        # checks that last line is not a header
+        if(old_line.startswith(">")):
+            return False
+    
+    return True
+
 def count_nucleotides(file):
     '''
     prints out the length of all nucleotide sequences in the given fasta file
@@ -66,7 +119,10 @@ def main():
     '''
     # T2.a
 
-    count_nucleotides(args.file_one)
+    if(check_if_fasta(args.file_one)):
+        count_nucleotides(args.file_one)
+    else:
+        print("wrong file format. Please insert a .fasta file")
 
     # TODO T3
 
