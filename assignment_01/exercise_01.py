@@ -164,7 +164,7 @@ def main():
         count_nucleotides(file1)
         if(not new_file_name.endswith(".fasta")):
             new_file_name += ".fasta"
-        write_new_file(file1, new_file_name)
+        # write_new_file(file1, new_file_name)
     else:
         print("wrong file format. Please insert a .fasta file")
 
