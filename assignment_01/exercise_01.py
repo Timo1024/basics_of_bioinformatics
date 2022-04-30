@@ -351,16 +351,22 @@ def calc_substitution_matrix(single_propability_array, joint_propability_matrix,
     return sm
 
 
-def print_matrix(substitution_matrix, aa_array):
+def print_matrix(substitution_matrix, aa_array, txt = False):
     '''
     prints the substitution Matrix in the command line
     '''
 
     # prints first two lines of matrix with all the amino acids
-    print("\t /\t", end = '')
-    for char in aa_array:
-        print("\t", end = '')
-    print("\\")
+    if txt:
+        print("\t /  \t", end = '')
+        for char in aa_array:
+            print("\t    ", end = '')
+        print("\\")
+    else:
+        print("\t /\t", end = '')
+        for char in aa_array:
+            print("\t", end = '')
+        print("\\")
 
     print("\t|   \t", end = '')
     for char in aa_array:
@@ -384,14 +390,20 @@ def print_matrix(substitution_matrix, aa_array):
         counter += 1
 
     # print last line of matrix
-    print("\t \\\t", end = '')
-    for char in aa_array:
-        print("\t", end = '')
-    print("/")
+    if txt:
+        print("\t \\  \t", end = '')
+        for char in aa_array:
+            print("\t    ", end = '')
+        print("/")
+    else:
+        print("\t \\\t", end = '')
+        for char in aa_array:
+            print("\t", end = '')
+        print("/")
 
 
 
-def compute_substitution_matrix(file, no_match_score):
+def compute_substitution_matrix(file, no_match_score, txt = False):
     '''
     computes the substitution matrix for the 
     sequences given in the file handed to the function
@@ -426,7 +438,7 @@ def compute_substitution_matrix(file, no_match_score):
     substitution_matrix = calc_substitution_matrix(single_propability_array, joint_propability_matrix, aa_array, no_match_score)
 
     # print substitution matrix
-    print_matrix(substitution_matrix, aa_array)
+    print_matrix(substitution_matrix, aa_array, txt)
 
 
 def print_heading(string):
@@ -486,7 +498,7 @@ def main():
         file_path = 'substitution_matrix.txt'
         with open(file_path, "w") as o:
             with contextlib.redirect_stdout(o):
-                compute_substitution_matrix(file2, -10)
+                compute_substitution_matrix(file2, -10, True)
 
 
     else:
