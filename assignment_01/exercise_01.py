@@ -103,7 +103,7 @@ def create_parser():
     '''
     Creates a argument parser to facilitate file reading.
     '''
-    
+
     # Make parser object
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -230,7 +230,7 @@ def reverse_sequence_order_and_save_reverse_comlements(file, filename):
 
     f.close()
 
-    print("the reverse complement of the sequences were saved as", filename)
+    print("the reverse complement of the sequences was saved as", filename)
 
 
 def main():
