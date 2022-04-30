@@ -514,4 +514,4 @@ if __name__ == "__main__":
 
         main()
     except:
-        print('Try:  python3 template-a1.py -f1 MultipleSeqs.fasta -f2 msa-scoring-matrix.fasta')
+        print('Try:  python3 exercise_01.py -f1 MultipleSeqs.fasta -f2 msa-scoring-matrix.fasta')
