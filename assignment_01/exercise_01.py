@@ -361,12 +361,11 @@ def print_matrix(substitution_matrix, aa_array, txt = False):
         print("\t /  \t", end = '')
         for char in aa_array:
             print("\t    ", end = '')
-        print("\\")
     else:
         print("\t /\t", end = '')
         for char in aa_array:
             print("\t", end = '')
-        print("\\")
+    print("\\")
 
     print("\t|   \t", end = '')
     for char in aa_array:
@@ -394,12 +393,11 @@ def print_matrix(substitution_matrix, aa_array, txt = False):
         print("\t \\  \t", end = '')
         for char in aa_array:
             print("\t    ", end = '')
-        print("/")
     else:
         print("\t \\\t", end = '')
         for char in aa_array:
             print("\t", end = '')
-        print("/")
+    print("/")
 
 
 
