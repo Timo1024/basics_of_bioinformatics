@@ -4,6 +4,7 @@ from itertools import count
 from msilib import sequence
 from unittest import case
 import math
+import contextlib
 
 def check_if_valid_chars(char_array, string, linebreak = True, space = True):
     '''
@@ -361,9 +362,9 @@ def print_matrix(substitution_matrix, aa_array):
         print("\t", end = '')
     print("\\")
 
-    print("\t| \t", end = '')
+    print("\t|   \t", end = '')
     for char in aa_array:
-        print(char, "\t", end = '')
+        print(char, "  \t", end = '')
     print(" |")
 
     # calculate middle of the height of the matrix
@@ -480,6 +481,13 @@ def main():
         # it needs a score for the case when the jp or sp is equal to zero
         print_heading("Substitution matrix:")
         compute_substitution_matrix(file2, -10)
+
+        # save substitution matrix in txt file
+        file_path = 'substitution_matrix.txt'
+        with open(file_path, "w") as o:
+            with contextlib.redirect_stdout(o):
+                compute_substitution_matrix(file2, -10)
+
 
     else:
         print("wrong file format. Please insert a .fasta file with amino acids")
