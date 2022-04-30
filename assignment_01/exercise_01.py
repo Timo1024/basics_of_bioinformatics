@@ -488,13 +488,12 @@ def main():
 
 
 if __name__ == "__main__":
-    # FIXME uncomment the try and except Part
-    # try:
+    try:
         args = create_parser()
         # accesing the path of the files
         print(args.file_one)
         print(args.file_two)
 
         main()
-    # except:
-    #     print('Try:  python3 template-a1.py -f1 MultipleSeqs.fasta -f2 msa-scoring-matrix.fasta')
+    except:
+        print('Try:  python3 template-a1.py -f1 MultipleSeqs.fasta -f2 msa-scoring-matrix.fasta')
