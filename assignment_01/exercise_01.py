@@ -102,8 +102,8 @@ def count_nucleotides(file):
 def create_parser():
     '''
     Creates a argument parser to facilitate file reading.
-
     '''
+    
     # Make parser object
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -121,7 +121,6 @@ def write_new_file(file, filename):
     then the user can set the sequences for these headers in the command line
     then the file is saved as a new file named filename
     '''
-
 
     # saves all headings
     heading_array = []
@@ -204,18 +203,6 @@ def reverse_sequence_order_and_save_reverse_comlements(file, filename):
     heading_sequence_array = extract_headings_sequences(file)
     heading_array  = heading_sequence_array[0]
     sequence_array = heading_sequence_array[1]
-
-    # heading_array  = []
-    # sequence_array = []
-    # with open(file) as file_content:
-    #     for line in file_content:
-    #         line = line[:line.rfind("\n")]
-    #         if(line.startswith(">")):
-    #             heading_array.append(line)
-    #         else:
-    #             if(len(sequence_array) != len(heading_array)):
-    #                 sequence_array.append([])
-    #             sequence_array[len(heading_array)-1].append(line)
 
     # makes the reverse complement of all sequences
     reverse_complement_array = []
