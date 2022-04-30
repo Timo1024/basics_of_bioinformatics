@@ -5,7 +5,7 @@ from msilib import sequence
 from unittest import case
 import math
 
-def check_if_valid_chars(char_array, string, linebreak = True):
+def check_if_valid_chars(char_array, string, linebreak = True, space = True):
     '''
     checks if the string is made of the alphabet char_array
     '''
@@ -14,21 +14,24 @@ def check_if_valid_chars(char_array, string, linebreak = True):
     if(linebreak):
         char_array.append("\n")
 
+    if(space):
+        char_array.append(" ")
+
     # checks if every char in the string is correct
     for char in string:
         if not char in char_array:
+            print(char)
             return False
     
     return True
 
-def check_if_fasta(file):
+def check_if_fasta(file, valid_chars):
     '''
     checks if the file is a valid .fasta file
     '''
 
     # init variables
     counter = 0
-    not_valid = True
     old_line = ""
 
     with open(file) as file_content:
@@ -46,7 +49,7 @@ def check_if_fasta(file):
 
             # check if the chars in a line of the sequence are valid
             if(not line.startswith(">")):
-                if(not check_if_valid_chars(["A", "T", "G", "C"], line)):
+                if(not check_if_valid_chars(valid_chars, line)):
                     return False
             
             old_line = line
@@ -182,7 +185,10 @@ def extract_headings_sequences(file):
     sequence_array = []
     with open(file) as file_content:
         for line in file_content:
+            normal_line = line
             line = line[:line.rfind("\n")]
+            if(not normal_line.endswith("\n")):
+                line = normal_line
             if(line.startswith(">")):
                 heading_array.append(line)
             else:
@@ -232,6 +238,206 @@ def reverse_sequence_order_and_save_reverse_comlements(file, filename):
 
     print("the reverse complement of the sequences was saved as", filename)
 
+def calc_sp(sequence_array, aa_array):
+    '''
+    calculates the single propabilities of all amino acids
+    and returns them in an array (positions are the same as in the aa_array)
+    '''
+
+    # concat all the sequences to one string
+    sequence = ""
+    for s in sequence_array:
+        sequence += s[0]
+    
+    # save length of all sequences combined
+    length = len(sequence)
+
+    # initialize array with all sps
+    sp_array = []
+
+    for aa in aa_array:
+        count = 0
+        for char in sequence:
+            if(char == aa):
+                count += 1
+        sp_array.append(count/length)
+        
+    return sp_array
+
+
+def how_often_match_x_y(char_to_compare_array, char_1, char_2):
+    '''
+    calculates how often the two chars match in the given array
+    '''
+
+    # counts the matches
+    match_count = 0
+
+    for aa in char_to_compare_array:
+        if aa == char_1:
+
+            # subtract 1 b/c it counts itself as match when both chars are equal
+            if(char_1 == char_2):
+                match_count -= 1
+
+            for bb in char_to_compare_array:
+                if bb == char_2:
+                    match_count += 1
+
+    # if the two chars are equal every match is counted twice, 
+    # so it has to be devided by 2
+    if char_1 == char_2:
+        match_count = match_count/2
+
+    return match_count
+
+
+def calc_jp(sequence_array, aa_array):
+    '''
+    calculates the joint propabilities of all amino acid pairs
+    and returns them in an matrix (positions are the same as in the aa_array)
+    '''
+
+    # initialize matrix to store joint propabilities
+    jp_matrix = []
+
+    # calculate how many possible alignments are possible
+    number_sequences = len(sequence_array)
+    length_sequence = len(sequence_array[0][0])
+    possible_alignments = sum(list(range(number_sequences))) * length_sequence
+    
+    # calculate jp for every combination
+    # TODO it is enough to calculate one half of the matrix and then mirror it
+    for aa1 in aa_array:
+        jp_matrix.append([])
+        for aa2 in aa_array:
+            matches = 0
+            for i in range(length_sequence):
+                char_to_compare_array = []
+                for array in sequence_array:
+                    char_to_compare_array.append(array[0][i:i+1])
+                matches += how_often_match_x_y(char_to_compare_array, aa1, aa2)
+            jp = matches / possible_alignments
+
+            # add jp to matrix
+            jp_matrix[aa_array[aa1]].append(jp)
+
+    return jp_matrix
+
+def calc_substitution_matrix(single_propability_array, joint_propability_matrix, aa_array, no_match_score):
+    '''
+    calculates the substitution matrix from the given single propabilities ans joint propabilities
+    '''
+
+    # initialize substitution matrix
+    sm = []
+
+    for aa1 in aa_array:
+        sm.append([])
+        for aa2 in aa_array:
+            if(((single_propability_array[aa_array[aa1]] * single_propability_array[aa_array[aa2]]) == 0) or
+                (joint_propability_matrix[aa_array[aa1]][aa_array[aa2]] == 0)):
+                sm[aa_array[aa1]].append(no_match_score)
+            else:
+                sm[aa_array[aa1]].append(
+                    math.log(
+                        joint_propability_matrix[aa_array[aa1]][aa_array[aa2]] / 
+                        (single_propability_array[aa_array[aa1]] * single_propability_array[aa_array[aa2]]),
+                        2
+                    )
+                )
+
+    return sm
+
+
+def print_matrix(substitution_matrix, aa_array):
+    '''
+    prints the substitution Matrix in the command line
+    '''
+
+    # prints first two lines of matrix with all the amino acids
+    print("\t /\t", end = '')
+    for char in aa_array:
+        print("\t", end = '')
+    print("\\")
+
+    print("\t| \t", end = '')
+    for char in aa_array:
+        print(char, "\t", end = '')
+    print(" |")
+
+    # calculate middle of the height of the matrix
+    middle = math.floor((len(aa_array)-1)/2)
+
+    counter = 0
+    for char1 in aa_array:
+        # print one line at a time
+        if(counter == middle):
+            print("S=\t| ", char1, "\t", end = '')
+        else:
+            print("\t| ", char1, "\t", end = '')
+        for char2 in aa_array:
+            value = round(substitution_matrix[aa_array[char1]][aa_array[char2]], 2)
+            print(value, " \t", end = '')
+        print(" |")
+        counter += 1
+
+    # print last line of matrix
+    print("\t \\\t", end = '')
+    for char in aa_array:
+        print("\t", end = '')
+    print("/")
+
+
+
+def compute_substitution_matrix(file, no_match_score):
+    '''
+    computes the substitution matrix for the 
+    sequences given in the file handed to the function
+    prints out the matrix in the command line
+    '''
+
+    # get the sequences in one array
+    heading_sequence_array = extract_headings_sequences(file)
+    sequence_array = heading_sequence_array[1]
+
+    # makes an associative array
+    # the number represents the index, where the amino acid is located in the arrays
+    aa_array = {
+        "A": 0, "R": 1, "N": 2, "D": 3, 
+        "C": 4, "E": 5, "Q": 6, "G": 7, 
+        "H": 8, "I": 9, "L": 10, "K": 11, 
+        "M": 12, "F": 13, "P": 14, "S": 15, 
+        "T": 16, "W": 17, "Y": 18, "V": 19
+    }
+    # TODO delete commented stuff below
+    # aa_array = {
+    #     "A": 0, "R": 1, "C": 2
+    # }
+
+    # calculate the single propability for every aa
+    single_propability_array = calc_sp(sequence_array, aa_array)
+
+    # calculate the joined propability for every aa pair
+    joint_propability_matrix = calc_jp(sequence_array, aa_array)
+
+    # calculate substitution matrix
+    substitution_matrix = calc_substitution_matrix(single_propability_array, joint_propability_matrix, aa_array, no_match_score)
+
+    # print substitution matrix
+    print_matrix(substitution_matrix, aa_array)
+
+
+def print_heading(string):
+    '''
+    prints a styled heading with the given string
+    '''
+
+    print("")
+    print("--------------------------------------------------")
+    print(string)
+    print("--------------------------------------------------")
+
 
 def main():
     '''
@@ -243,16 +449,40 @@ def main():
     new_file_name = "MultipleSeqsReverse.fasta"
     file1 = args.file_one
 
-    if(check_if_fasta(file1)):
+    # all base chars
+    base_chars = ["A", "T", "G", "C"]
+
+    if(check_if_fasta(file1, base_chars)):
+        
+        # counting the bases of the sequences
+        print_heading("Counting of the nucleotides in the sequences:")
         count_nucleotides(file1)
+
+        # calculating the reverse complement of the sequences
+        print_heading("Calculating the reverse complement of the sequences:")
         if(not new_file_name.endswith(".fasta")):
             new_file_name += ".fasta"
-        # write_new_file(file1, new_file_name)
-        reverse_sequence_order_and_save_reverse_comlements(file1, "MultipleSeqsReverse.fasta")
-    else:
-        print("wrong file format. Please insert a .fasta file")
+        reverse_sequence_order_and_save_reverse_comlements(file1, new_file_name)
 
-    # TODO T3
+    else:
+        print("wrong file format. Please insert a .fasta file with bases")
+
+    # T3
+
+    file2 = args.file_two
+
+    # all amino acid chars
+    amino_chars = ["A", "R", "N", "D", "C", "E", "Q", "G", "H", "I", "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V"]
+
+    if(check_if_fasta(file2, amino_chars)):
+
+        # calculating the substitution matrix
+        # it needs a score for the case when the jp or sp is equal to zero
+        print_heading("Substitution matrix:")
+        compute_substitution_matrix(file2, -10)
+
+    else:
+        print("wrong file format. Please insert a .fasta file with amino acids")
 
 
 
