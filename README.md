@@ -6,7 +6,8 @@ Used to store and share .py files with fellow students
 
 # Summary of Assignment 1
 2. Reading and Writing Sequences in FASTA Format
-  2 a) Reverse complement of the sequences 
+
+  2. a) Reverse complement of the sequences 
 
 3. Substitution matrix computation
 
