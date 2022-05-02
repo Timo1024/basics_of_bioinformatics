@@ -17,6 +17,7 @@ def check_if_valid_chars(char_array, string, linebreak = True, space = True):
     # checks if every char in the string is correct
     for char in string:
         if not char in char_array:
+            # FIXME change output
             print(char)
             return False
     
