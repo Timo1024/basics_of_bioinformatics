@@ -203,7 +203,7 @@ def extract_headings_sequences(file):
     return [heading_array, sequence_array]
 
 
-def reverse_sequence_order_and_save_reverse_comlements(file, filename):
+def reverse_sequence_order_and_save_reverse_complements(file, filename):
     '''
     reverses the order of the sequences and saves the reverse complement of the
     sequences
@@ -480,7 +480,7 @@ def main():
         print_heading("Calculating the reverse complement of the sequences:")
         if(not new_file_name.endswith(".fasta")):
             new_file_name += ".fasta"
-        reverse_sequence_order_and_save_reverse_comlements(file1, new_file_name)
+        reverse_sequence_order_and_save_reverse_complements(file1, new_file_name)
 
     else:
         print("wrong file format. Please insert a .fasta file with bases")
@@ -497,6 +497,7 @@ def main():
         # calculating the substitution matrix
         # it needs a score for the case when the jp or sp is equal to zero
         print_heading("Substitution matrix:")
+        # TODO was soll bei -10 stehen, also wenn normalerweise keine as vorkommt aber plötzlich schon
         compute_substitution_matrix(file2, -10)
 
         # save substitution matrix in txt file
