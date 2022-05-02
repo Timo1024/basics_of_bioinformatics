@@ -84,7 +84,7 @@ def count_nucleotides(file):
                     # resetting the count of nucleotides for the next sequence
                     count_nucleotides = 0
                 
-                # saves the name of the next sequence for later, when ist printed out
+                # saves the name of the next sequence for later, when its printed out
                 name_of_sequence = line
 
             # if the line doesnt start with a ">", the program counts the nucleotides in the line
@@ -462,6 +462,10 @@ def main():
 
     new_file_name = "MultipleSeqsReverse.fasta"
     file1 = args.file_one
+
+    #TODO delete???
+    # filename_3 = "test.fasta"
+    # write_new_file(file1, filename_3)
 
     # all base chars
     base_chars = ["A", "T", "G", "C"]
