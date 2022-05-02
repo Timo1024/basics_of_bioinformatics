@@ -22,6 +22,7 @@ def check_if_valid_chars(char_array, string, linebreak = True, space = True):
     
     return True
 
+
 def check_if_fasta(file, valid_chars):
     '''
     checks if the file is a valid .fasta file
@@ -57,6 +58,7 @@ def check_if_fasta(file, valid_chars):
             return False
     
     return True
+
 
 def count_nucleotides(file):
     '''
@@ -99,6 +101,7 @@ def count_nucleotides(file):
             print("length of", name_of_sequence[:name_of_sequence.rfind("\n")], "=", count_nucleotides)
             count_nucleotides = 0
 
+
 def create_parser():
     '''
     Creates a argument parser to facilitate file reading.
@@ -114,6 +117,7 @@ def create_parser():
                    help="File for the the second programming task")
 
     return(p.parse_args())
+
 
 def write_new_file(file, filename):
     '''
@@ -151,6 +155,7 @@ def write_new_file(file, filename):
 
     print("your new file was saved as", filename)
 
+
 def make_reverse_complement(sequence):
     '''
     makes the reverse complement of a sequence
@@ -172,6 +177,7 @@ def make_reverse_complement(sequence):
             new_sequence += "G"
 
     return new_sequence
+
 
 def extract_headings_sequences(file):
     '''
@@ -234,6 +240,7 @@ def reverse_sequence_order_and_save_reverse_comlements(file, filename):
     f.close()
 
     print("the reverse complement of the sequences was saved as", filename)
+
 
 def calc_sp(sequence_array, aa_array):
     '''
@@ -321,6 +328,7 @@ def calc_jp(sequence_array, aa_array):
 
     return jp_matrix
 
+
 def calc_substitution_matrix(single_propability_array, joint_propability_matrix, aa_array, no_match_score):
     '''
     calculates the substitution matrix from the given single propabilities ans joint propabilities
@@ -343,7 +351,6 @@ def calc_substitution_matrix(single_propability_array, joint_propability_matrix,
                         2
                     )
                 )
-
     return sm
 
 
@@ -394,7 +401,6 @@ def print_matrix(substitution_matrix, aa_array, txt = False):
         for char in aa_array:
             print("\t", end = '')
     print("/")
-
 
 
 def compute_substitution_matrix(file, no_match_score, txt = False):
@@ -494,16 +500,14 @@ def main():
             with contextlib.redirect_stdout(o):
                 compute_substitution_matrix(file2, -10, True)
 
-
     else:
         print("wrong file format. Please insert a .fasta file with amino acids")
-
-
 
 
 if __name__ == "__main__":
     try:
         args = create_parser()
+        
         # accesing the path of the files
         print(args.file_one)
         print(args.file_two)
