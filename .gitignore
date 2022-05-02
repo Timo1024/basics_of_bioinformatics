@@ -2,6 +2,7 @@
 **/test.fasta
 **/MultipleSeqsReverse.fasta
 **/substitution_matrix.txt
+**/*.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
