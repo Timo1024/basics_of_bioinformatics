@@ -314,7 +314,8 @@ def calc_jp(sequence_array, aa_array):
     possible_alignments = sum(list(range(number_sequences))) * length_sequence
     
     # calculate jp for every combination
-    # TODO it is enough to calculate one half of the matrix and then mirror it
+    # it would be enough to calculate one half of the matrix. But O(n) = O(2n)
+    # so it would make not a big difference in the runtime
     for aa1 in aa_array:
         jp_matrix.append([])
         for aa2 in aa_array:
