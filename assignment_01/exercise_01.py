@@ -122,43 +122,53 @@ def create_parser():
     return(p.parse_args())
 
 
-def write_new_file(file, filename):
+def write_new_file(file, filename, new_sequence_array):
     '''
     uses the given file to get the headers
-    then the user can set the sequences for these headers in the command line
+    the given array with the new sequences are combined with the headers
     then the file is saved as a new file named filename
     '''
 
-    # FIXME change so that not user input but array with sequences is used
-
     # saves all headings
-    heading_array = []
-    with open(file) as file_content:
-        for line in file_content:
-            if(line.startswith(">")):
-                heading_array.append(line)
+    heading_array = extract_headings_sequences(file)[0]
 
-    # creates new File
-    f = open(filename, "w")
+    # checks that the count of headings is equal to the number of sequences given
+    equal_length = len(heading_array) == len(new_sequence_array)
 
-    # user can type the new sequences and the heading and the new sequences
-    # are added to the new file
-    for heading in heading_array:
-        f.write(heading)
-        cons_output = "Type the new Sequence for"
-        cons_output += heading
+    correct_input = True
+    if(equal_length):
 
-        # checks if input is a correct sequence
-        correct_input = False
-        while not correct_input:
-            new_sequence = input(cons_output)
-            correct_input = check_if_valid_chars(["A", "T", "G", "C"], new_sequence)
-        new_sequence += "\n"
-        f.write(new_sequence)
+        # creates new File
+        f = open(filename, "w")
 
-    f.close()
+        index_counter = 0
+        for heading in heading_array:
 
-    print("your new file was saved as", filename)
+            # writes heading in the new file
+            heading += "\n"
+            f.write(heading)
+            
+            # adds sequence to the file
+            new_sequence = new_sequence_array[index_counter]
+
+            # checks if input is a correct sequence
+            correct_input = (check_if_valid_chars(["A", "T", "G", "C"], new_sequence) and correct_input)
+
+            # splits the sequnce in parts so every line in the result file is just 60 characters long
+            new_sequence = '\n'.join(new_sequence[i:i+60] for i in range(0, len(new_sequence), 60))
+            new_sequence += "\n"
+            f.write(new_sequence)
+
+            index_counter += 1
+
+    # saves the file if everything was correct otherwise gives error message
+    if(correct_input and equal_length):
+        f.close()
+        print("your new file with the given sequences was saved as", filename)
+    elif(not correct_input):
+        print("your given sequences are not valid. Please use only ATCG in the sequneces")
+    elif(not equal_length):
+        print("you have to give the same amount of sequences as there are headings in your file")
 
 
 def make_reverse_complement(sequence):
@@ -462,16 +472,23 @@ def main():
     # TODO schauen, was wirklich in die main Funktion rein soll (vermutlich nur der Teil bei a))
 
     new_file_name = "MultipleSeqsReverse.fasta"
+    new_file_name_2 = "new_sequences.fasta"
     file1 = args.file_one
-
-    #TODO delete???
-    # filename_3 = "test.fasta"
-    # write_new_file(file1, filename_3)
 
     # all base chars
     base_chars = ["A", "T", "G", "C"]
 
     if(check_if_fasta(file1, base_chars)):
+
+        # makes new file with headings from file1 and sequences from array
+        print_heading("Making new file with old headings and changed sequences:")
+        if(not new_file_name_2.endswith(".fasta")):
+            new_file_name_2 += ".fasta"
+        write_new_file(file1, new_file_name_2, [
+             "ATTAGACTGATTGCGCTAG",
+            "GGTACGATTAGTAGGCGTAGATAG", 
+            "GCGGGAGTGATGCTGAGGTCCTCTAGTCGTATGGTGCTTAGCTAGTCTGACTGACGTTGACCAGTAGCGATGCA"
+        ])
         
         # counting the bases of the sequences
         print_heading("Counting of the nucleotides in the sequences:")
@@ -512,7 +529,7 @@ def main():
 
 
 if __name__ == "__main__":
-    try:
+    # try:
         args = create_parser()
         
         # accesing the path of the files
@@ -520,6 +537,6 @@ if __name__ == "__main__":
         print(args.file_two)
 
         main()
-    except:
-        # TODO change file name of python file
-        print('Try:  python3 exercise_01.py -f1 MultipleSeqs.fasta -f2 msa-scoring-matrix.fasta')
+    # except:
+    #     # TODO change file name of python file
+    #     print('Try:  python3 exercise_01.py -f1 MultipleSeqs.fasta -f2 msa-scoring-matrix.fasta')
