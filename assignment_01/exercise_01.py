@@ -429,10 +429,6 @@ def compute_substitution_matrix(file, no_match_score, txt = False):
         "M": 12, "F": 13, "P": 14, "S": 15, 
         "T": 16, "W": 17, "Y": 18, "V": 19
     }
-    # TODO delete commented stuff below
-    # aa_array = {
-    #     "A": 0, "R": 1, "C": 2
-    # }
 
     # calculate the single propability for every aa
     single_propability_array = calc_sp(sequence_array, aa_array)
