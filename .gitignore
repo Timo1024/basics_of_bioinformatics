@@ -1,8 +1,8 @@
 # self added
 **/test.fasta
-**/MultipleSeqsReverse.fasta
-**/new_sequences.fasta
-**/substitution_matrix.txt
+# **/MultipleSeqsReverse.fasta
+# **/new_sequences.fasta
+# **/substitution_matrix.txt
 **/*.zip
 
 # Byte-compiled / optimized / DLL files
