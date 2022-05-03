@@ -129,6 +129,8 @@ def write_new_file(file, filename):
     then the file is saved as a new file named filename
     '''
 
+    # FIXME change so that not user input but array with sequences is used
+
     # saves all headings
     heading_array = []
     with open(file) as file_content:
