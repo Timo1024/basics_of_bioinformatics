@@ -520,4 +520,5 @@ if __name__ == "__main__":
 
         main()
     except:
+        # TODO change file name of python file
         print('Try:  python3 exercise_01.py -f1 MultipleSeqs.fasta -f2 msa-scoring-matrix.fasta')
