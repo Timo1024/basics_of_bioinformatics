@@ -529,7 +529,7 @@ def main():
 
 
 if __name__ == "__main__":
-    # try:
+    try:
         args = create_parser()
         
         # accesing the path of the files
@@ -537,6 +537,6 @@ if __name__ == "__main__":
         print(args.file_two)
 
         main()
-    # except:
-    #     # TODO change file name of python file
-    #     print('Try:  python3 exercise_01.py -f1 MultipleSeqs.fasta -f2 msa-scoring-matrix.fasta')
+    except:
+        # TODO change file name of python file
+        print('Try:  python3 Sara_Kemmler_Robin_Bonkass_A1.py -f1 MultipleSeqs.fasta -f2 msa-scoring-matrix.fasta')
