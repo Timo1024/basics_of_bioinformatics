@@ -515,14 +515,19 @@ def main():
         # calculating the substitution matrix
         # it needs a score for the case when the jp or sp is equal to zero
         print_heading("Substitution matrix:")
-        # TODO was soll bei -10 stehen, also wenn normalerweise keine as vorkommt aber plötzlich schon
-        compute_substitution_matrix(file2, -10)
+
+        # defines penalty when one of the joint or single propabilities is equal to zero
+        # these entries could get a very negative number or even -infinity
+        # or because we don't know the case when a aa is there we could leave this cell of the matrix empty
+        penalty_when_no_matches_found = -10
+
+        compute_substitution_matrix(file2, penalty_when_no_matches_found)
 
         # save substitution matrix in txt file
         file_path = 'substitution_matrix.txt'
         with open(file_path, "w") as o:
             with contextlib.redirect_stdout(o):
-                compute_substitution_matrix(file2, -10, True)
+                compute_substitution_matrix(file2, penalty_when_no_matches_found, True)
 
     else:
         print("wrong file format. Please insert a .fasta file with amino acids")
@@ -538,5 +543,4 @@ if __name__ == "__main__":
 
         main()
     except:
-        # TODO change file name of python file
         print('Try:  python3 Sara_Kemmler_Robin_Bonkass_A1.py -f1 MultipleSeqs.fasta -f2 msa-scoring-matrix.fasta')
