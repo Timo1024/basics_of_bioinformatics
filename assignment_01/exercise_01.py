@@ -11,6 +11,7 @@ def check_if_valid_chars(char_array, string, linebreak = True, space = True):
     if(linebreak):
         char_array.append("\n")
 
+    # if spaces (occur sometimes at the end of a line) are allowed then add " " to the alphabet
     if(space):
         char_array.append(" ")
 
