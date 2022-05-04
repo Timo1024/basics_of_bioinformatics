@@ -469,7 +469,6 @@ def main():
     The main function should contain all functions that solved the stated tasks. 
     '''
     # T2.a
-    # TODO schauen, was wirklich in die main Funktion rein soll (vermutlich nur der Teil bei a))
 
     new_file_name = "MultipleSeqsReverse.fasta"
     new_file_name_2 = "new_sequences.fasta"
