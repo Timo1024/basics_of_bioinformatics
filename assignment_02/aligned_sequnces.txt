@@ -18,4 +18,4 @@ Match score = 		2
 Mismatch score = 	-2
 Gap Penalty = 		4
 
-Time the algorithm needed to compute the alignment: 46.875 ms
+Time the algorithm needed to compute the alignment: 31.25 ms
