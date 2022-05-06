@@ -1,5 +1,26 @@
 import argparse
+from asyncio.windows_events import NULL
 from email.mime import base
+
+def print_matrix(matrix, full = False):
+    '''
+    prints a matrix in command line
+    used to debug
+    '''
+
+    
+    for i in range(len(matrix)):
+        if(not full):
+            for j in range(len(matrix[0])):
+                print(matrix[i][j][0], "\t", end = '')
+            print("")
+        else:
+            for j in range(len(matrix[0])):
+                if(j == 0 and i == 0):
+                    print("\t", end = '')
+                else:
+                    print(matrix[i][j][1], "\t", end = '')
+            print("")
 
 def create_parser():
     '''
@@ -163,22 +184,101 @@ def compute(seq1, seq2, s, d):
 
     # initialize matrix array
     matrix = []
-    for j in range(m):
+    for j in range(m+1):
         matrix.append([])
-        for i in range(n):
-            matrix[j].append([])
-
-    # print(matrix)
-
+        for i in range(n+1):
+            matrix[j].append([0,[0,0]])
 
     # initialize matrix values
-    for i in range(n):
-        
+    for i in range(n+1):
+            matrix[0][i] = [-i * d, [i-1, 0]]
+    for j in range(m+1):
+        matrix[j][0] = [-j * d, [0, j-1]]
 
+    # iterates through all fields of the matrix
+    for i in range(1,n+1):
+        for j in range(1,m+1):
 
-    ###########
+            # calculate if match or mismatch
+            if(seq1[i-1] == seq2[j-1]):
+                score = s[0]
+            else:
+                score = s[1]
+
+            # calculate maximum
+            maximum = max(matrix[j-1][i-1][0] + score, matrix[j-1][i][0]-d, matrix[j][i-1][0]-d)
+
+            # sets the max value in the matrix and the traceback
+            if(maximum == matrix[j-1][i-1][0] + score):
+                matrix[j][i] = [maximum, [i-1,j-1]]
+            elif(maximum == matrix[j-1][i][0]-d):
+                matrix[j][i] = [maximum, [i,j-1]]
+            else:
+                # maximum == matrix[j][i-1][0]-d could be condition here
+                matrix[j][i] = [maximum, [i-1,j]]
 
     return matrix
+
+
+def traceback(matrix, seq1, seq2):
+    '''
+    calculates one alignment with the matrix
+    and prints the optimal score
+    '''
+
+    print("the optimal score for an global alignment is ", matrix[len(matrix)-1][len(matrix[0])-1][0])
+
+    # print_matrix(matrix, True)
+
+    start_i = len(matrix)-1
+    start_j = len(matrix[0])-1
+
+    # print(matrix[5][8])
+
+    seq1_aligned = ""
+    seq2_aligned = ""
+
+    old_i = len(matrix)-1
+    old_j = len(matrix[0])-1
+
+    count = 0
+
+    while(start_j != -1 and start_i != -1):
+
+        print("compare (", old_i, ",",  old_j , ") with (", start_i, ",",  start_j , ")" )
+        
+        if(old_i == start_i and (old_i != len(matrix)-1 or start_i != len(matrix)-1)):
+            seq2_aligned += "-"
+            seq1_aligned += seq1[old_j-1]
+            # print(seq2_aligned)
+        elif(old_j == start_j and (old_j != len(matrix[0])-1 or start_j != len(matrix[0])-1)):
+            seq1_aligned += "-"
+            seq2_aligned += seq2[old_i-1]
+            # print(seq1_aligned)
+        elif(count != 0):
+            seq1_aligned += seq1[old_j-1]
+            # print(seq2)
+            # print(start_i-1)
+            seq2_aligned += seq2[old_i-1]
+
+        count += 1
+        old_j = start_j
+        old_i = start_i
+
+        # print("j =", start_j, "; i =", start_i)
+
+        # print_matrix(matrix)
+
+        start_i = matrix[old_i][old_j][1][1]
+        start_j = matrix[old_i][old_j][1][0]
+
+    # print("j =", start_j, "; i =", start_i)
+
+    print_matrix(matrix, False)
+    print_matrix(matrix, True)
+
+    print(seq1_aligned)
+    print(seq2_aligned)
 
 
 def main():
@@ -205,7 +305,11 @@ def main():
         # gap penalty d
         d = parameters[2]
 
-        compute(seq1, seq2, s, d)
+        # computes the matrix
+        matrix = compute(seq1, seq2, s, d)
+
+        # calculates one alignment and the optimal score
+        traceback(matrix, seq1, seq2)
 
     else:
         print("wrong files format. The sequences have to contain just nucleotides")
