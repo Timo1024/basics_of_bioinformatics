@@ -4,10 +4,11 @@ Repo for the course "Grundlagen der Bioinformatik" at the Eberhard Karls Uni Tü
 ## Usage
 Used to store and share .py files with fellow students
 
-# Summary of Assignment 1
-2) Reading and Writing Sequences in FASTA Format
+# Assignment 1
+Reading and Writing Sequences in FASTA Format
+Calculating the reverse complement of a sequence
+Calculating the substitution matrix
 
-  2a) Reverse complement of the sequences 
-
-3) Substitution matrix computation
-
+# Assignemnt 2
+Calculating one global alignment of two sequences
+using the Needleman-Wunsch algorithm
