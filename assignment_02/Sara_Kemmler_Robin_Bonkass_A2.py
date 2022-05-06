@@ -243,16 +243,13 @@ def traceback(matrix, seq1, seq2):
     # going from (n,m) backwards until we are at (0,0)
     while(start_j != -1 and start_i != -1):
         
-        # if(old_i == start_i and (old_i != len(matrix)-1 or start_i != len(matrix)-1)):
         if(old_i == start_i and (count != 0)):
             seq2_aligned += "-"
             seq1_aligned += seq1[old_j-1]
-        # elif(old_j == start_j and (old_j != len(matrix[0])-1 or start_j != len(matrix[0])-1)):
         elif(old_j == start_j and (count != 0)):
             seq1_aligned += "-"
             seq2_aligned += seq2[old_i-1]
         elif(count != 0):
-            print(old_j, "=", start_j, old_j != len(matrix[0])-1 or start_j != len(matrix[0])-1)
             seq1_aligned += seq1[old_j-1]
             seq2_aligned += seq2[old_i-1]
 
