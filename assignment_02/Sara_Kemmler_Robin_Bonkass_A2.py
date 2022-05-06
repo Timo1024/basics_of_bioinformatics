@@ -1,3 +1,9 @@
+'''
+Assignment 2
+Robin Bonkaß
+Sara Kemmler
+'''
+
 import argparse
 from time import process_time
 
