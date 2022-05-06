@@ -280,40 +280,88 @@ def make_file(aligned, matrix, s, d, duration):
     f.write("------------------------------------------------------------------\nOne possible global Alignment with optimal alignment score ")
     f.write(str(matrix[len(matrix)-1][len(matrix[0])-1][0]))
     f.write(":\n------------------------------------------------------------------\n\n")
-    f.write("\t\t\t  X = ")
-    f.write(aligned[0])
-    f.write("\n")
-    f.write("\t\t\t\t  ")
-    f.write(match_string)
-    f.write("\n")
-    f.write("\t\t\t  Y = ")
-    f.write(aligned[1])
 
-    # writing and calculating the amount of 
+    # calculating the amount of 
     # Match, 
     # Mismatch, 
     # Gap (Insertion, Deletion)
+    # saving the edit transcript
     amount_m = 0
     amount_i = 0
     amount_d = 0
     amount_r = 0
+    et = ""
 
-    f.write("\n\nedit transcript = ")
     for i in range(len(aligned[0])):
         if(aligned[0][i] == aligned[1][i]):
-            f.write("M")
+            et += "M"
+            # f.write("M")
             amount_m += 1
         elif(aligned[0][i] == "-"):
-            f.write("I")
+            et += "I"
+            # f.write("I")
             amount_i += 1
         elif(aligned[1][i] == "-"):
-            f.write("D")
+            et += "D"
+            # f.write("D")
             amount_d += 1
         else:
-            f.write("R")
+            et += "R"
+            # f.write("R")
             amount_r += 1
 
+    # make arrays of length 60 of every string
+    aligned_0 = []
+    aligned_0.append(aligned[0][0:56])
+    for i in range(56, len(aligned[0]), 60):
+        aligned_0.append(aligned[0][i:i+60])
+    aligned_1 = []
+    aligned_1.append(aligned[1][0:56])
+    for i in range(56, len(aligned[1]), 60):
+        aligned_1.append(aligned[1][i:i+60])
+    matching = []
+    matching.append(match_string[0:56])
+    for i in range(56, len(match_string), 60):
+        matching.append(match_string[i:i+60])
+    et_array = []
+    et_array.append(et[0:56])
+    for i in range(56, len(et), 60):
+        et_array.append(et[i:i+60])
+
+    # writing the first line of alignment
+    f.write("X = ")
+    f.write(aligned_0[0])
     f.write("\n")
+    f.write("    ")
+    f.write(matching[0])
+    f.write("\n")
+    f.write("Y = ")
+    f.write(aligned_1[0])
+    f.write("\nT = ")
+    f.write(et_array[0])
+    f.write("\n")
+
+    # writing all other lines of the alignment
+    for i in range(1, len(et_array)):
+        f.write("\n")
+        f.write(aligned_0[i])
+        f.write("\n")
+        f.write(matching[i])
+        f.write("\n")
+        f.write(aligned_1[i])
+        f.write("\n")
+        f.write(et_array[i])
+        f.write("\n")
+
+    # writing down the legend
+    f.write("\n")
+    f.write("X -> ")
+    f.write(args.file_one)
+    f.write("\nY -> ")
+    f.write(args.file_two)
+    f.write("\nT -> edit transcrip\n")
+
+    # writing down the legend for {M,I,D,R}
     f.write("\nM -> Match ..................... Amount: ")
     f.write(str(amount_m))
     f.write("\nI -> Insertion ................. Amount: ")
@@ -386,7 +434,8 @@ def main():
 
 
 if __name__ == "__main__":
-    try:
+    # TODO uncomment
+    # try:
         args = create_parser()
         
         # accesing the path of the files
@@ -394,5 +443,5 @@ if __name__ == "__main__":
         print(args.file_two)
 
         main()
-    except:
-        print('Try:  python3 Sara_Kemmler_Robin_Bonkass_A2.py -f1 yersenia_1.fasta -f2 yersenia_2.fasta')
+    # except:
+    #     print('Try:  python3 Sara_Kemmler_Robin_Bonkass_A2.py -f1 yersenia_1.fasta -f2 yersenia_2.fasta')
