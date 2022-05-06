@@ -6,7 +6,6 @@ def print_matrix(matrix, full = False):
     prints a matrix in command line
     used to debug
     '''
-
     
     for i in range(len(matrix)):
         if(not full):
@@ -295,19 +294,15 @@ def make_file(aligned, matrix, s, d, duration):
     for i in range(len(aligned[0])):
         if(aligned[0][i] == aligned[1][i]):
             et += "M"
-            # f.write("M")
             amount_m += 1
         elif(aligned[0][i] == "-"):
             et += "I"
-            # f.write("I")
             amount_i += 1
         elif(aligned[1][i] == "-"):
             et += "D"
-            # f.write("D")
             amount_d += 1
         else:
             et += "R"
-            # f.write("R")
             amount_r += 1
 
     # make arrays of length 60 of every string
