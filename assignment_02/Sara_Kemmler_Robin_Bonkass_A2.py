@@ -1,6 +1,4 @@
 import argparse
-from asyncio.windows_events import NULL
-from email.mime import base
 from time import process_time
 
 def print_matrix(matrix, full = False):
@@ -227,8 +225,10 @@ def traceback(matrix, seq1, seq2):
     and prints the optimal score
     '''
 
+    # prints the optimal alignment score in the console
     print("the optimal score for an global alignment is", matrix[len(matrix)-1][len(matrix[0])-1][0])
 
+    # initializing some variables
     start_i = len(matrix)-1
     start_j = len(matrix[0])-1
 
@@ -240,6 +240,7 @@ def traceback(matrix, seq1, seq2):
 
     count = 0
 
+    # going from (n,m) backwards until we are at (0,0)
     while(start_j != -1 and start_i != -1):
         
         if(old_i == start_i and (old_i != len(matrix)-1 or start_i != len(matrix)-1)):
@@ -259,6 +260,7 @@ def traceback(matrix, seq1, seq2):
         start_i = matrix[old_i][old_j][1][1]
         start_j = matrix[old_i][old_j][1][0]
 
+    # reversing the strings
     seq1_aligned = seq1_aligned[::-1]
     seq2_aligned = seq2_aligned[::-1]
 
@@ -384,7 +386,7 @@ def main():
 
 
 if __name__ == "__main__":
-    # try:
+    try:
         args = create_parser()
         
         # accesing the path of the files
@@ -392,5 +394,5 @@ if __name__ == "__main__":
         print(args.file_two)
 
         main()
-    # except:
-    #     print('Try:  python3 Sara_Kemmler_Robin_Bonkass_A2.py -f1 yersenia_1.fasta -f2 yersenia_2.fasta')
+    except:
+        print('Try:  python3 Sara_Kemmler_Robin_Bonkass_A2.py -f1 yersenia_1.fasta -f2 yersenia_2.fasta')
