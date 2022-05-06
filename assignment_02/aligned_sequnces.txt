@@ -1,0 +1,21 @@
+------------------------------------------------------------------
+One possible global Alignment with optimal alignment score -80:
+------------------------------------------------------------------
+
+			  X = AAAACCCCCCCCGCCGTATTTCCATCGGGGTGCATGAATGCGATTAAGCGGTAAGGC-TA-AATATTGGGGGGAATTACACTG-CGACGGCGGTTTTCAGTTGCTGAAGATTATTGATGATATAACCTCCCCCTAATCGCTCTCACTAATTATTT-TTATTTATTACAATGGCCGACGAG-TTCTTTATAGGCATCATCAATTTTTTTCTTTGC-AG-CTTCT-AC-TCG
+				  ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+			  Y = -CCAGTTTCACGGCTGTGATT-CATC-AGGT-CGCGCA--CCATCAGGAAGT-AGCCACAGAAGCCCAGACGG-GTCAGCGTGTCCATTTCGTACTTCAGACGATCAACATACACGCGGTGCTCAGAAGCCGGTGGTGTGTAGC-CAAACTCTTTGGTA-GTAAGACGCTTG-CG-C-AGCCCCGCGACAGCCAGCTTCATCAGCGTTGCAGGCTCGTCGTCTGCCATCT
+
+edit transcript = DRRMRRRRMRMRMMRMMRRMMDMMMMDRMMMDMRRMRMDDMRMMRMRMRRMMDMMRMIRMIMMRRRRRMRRMMDRMRMRRRMMIMRMRRRMMRRRMMMMMRRMRMRMMRMMRRRRMRRMRRRMRMRRRRMMRRMRRMRRRMRRMDMRMMRMRMMMIRMMDRMMRRMMRRMRMDMMDMDMMIRRMRRRMRMMRMMRMRMMMRRRRRRMMRRRRMMIRMIMRMMMIRMIMMR
+
+M -> Match ..................... Amount: 106
+I -> Insertion ................. Amount: 9
+D -> Deletion .................. Amount: 13
+R -> Replacement (Mismatch) .... Amount: 102
+
+used Algorithm parameters:
+Match score = 		2
+Mismatch score = 	-2
+Gap Penalty = 		4
+
+Time the algorithm needed to compute the alignment: 46.875 ms

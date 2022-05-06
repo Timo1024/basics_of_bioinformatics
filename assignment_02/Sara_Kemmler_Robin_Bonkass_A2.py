@@ -1,6 +1,7 @@
 import argparse
 from asyncio.windows_events import NULL
 from email.mime import base
+from time import process_time
 
 def print_matrix(matrix, full = False):
     '''
@@ -226,14 +227,10 @@ def traceback(matrix, seq1, seq2):
     and prints the optimal score
     '''
 
-    print("the optimal score for an global alignment is ", matrix[len(matrix)-1][len(matrix[0])-1][0])
-
-    # print_matrix(matrix, True)
+    print("the optimal score for an global alignment is", matrix[len(matrix)-1][len(matrix[0])-1][0])
 
     start_i = len(matrix)-1
     start_j = len(matrix[0])-1
-
-    # print(matrix[5][8])
 
     seq1_aligned = ""
     seq2_aligned = ""
@@ -244,41 +241,101 @@ def traceback(matrix, seq1, seq2):
     count = 0
 
     while(start_j != -1 and start_i != -1):
-
-        print("compare (", old_i, ",",  old_j , ") with (", start_i, ",",  start_j , ")" )
         
         if(old_i == start_i and (old_i != len(matrix)-1 or start_i != len(matrix)-1)):
             seq2_aligned += "-"
             seq1_aligned += seq1[old_j-1]
-            # print(seq2_aligned)
         elif(old_j == start_j and (old_j != len(matrix[0])-1 or start_j != len(matrix[0])-1)):
             seq1_aligned += "-"
             seq2_aligned += seq2[old_i-1]
-            # print(seq1_aligned)
         elif(count != 0):
             seq1_aligned += seq1[old_j-1]
-            # print(seq2)
-            # print(start_i-1)
             seq2_aligned += seq2[old_i-1]
 
         count += 1
         old_j = start_j
         old_i = start_i
 
-        # print("j =", start_j, "; i =", start_i)
-
-        # print_matrix(matrix)
-
         start_i = matrix[old_i][old_j][1][1]
         start_j = matrix[old_i][old_j][1][0]
 
-    # print("j =", start_j, "; i =", start_i)
+    seq1_aligned = seq1_aligned[::-1]
+    seq2_aligned = seq2_aligned[::-1]
 
-    print_matrix(matrix, False)
-    print_matrix(matrix, True)
+    return [seq1_aligned, seq2_aligned]
 
-    print(seq1_aligned)
-    print(seq2_aligned)
+def make_file(aligned, matrix, s, d, duration):
+    '''
+    creates a new txt file with information about the alignment
+    '''
+
+    # writes the two sequences on top of each other to see the alignemnt
+    match_string = ""
+    for i in range(len(aligned[0])):
+        match_string += "|"
+
+    f = open("aligned_sequnces.txt", "w")
+    f.write("------------------------------------------------------------------\nOne possible global Alignment with optimal alignment score ")
+    f.write(str(matrix[len(matrix)-1][len(matrix[0])-1][0]))
+    f.write(":\n------------------------------------------------------------------\n\n")
+    f.write("\t\t\t  X = ")
+    f.write(aligned[0])
+    f.write("\n")
+    f.write("\t\t\t\t  ")
+    f.write(match_string)
+    f.write("\n")
+    f.write("\t\t\t  Y = ")
+    f.write(aligned[1])
+
+    # writing and calculating the amount of 
+    # Match, 
+    # Mismatch, 
+    # Gap (Insertion, Deletion)
+    amount_m = 0
+    amount_i = 0
+    amount_d = 0
+    amount_r = 0
+
+    f.write("\n\nedit transcript = ")
+    for i in range(len(aligned[0])):
+        if(aligned[0][i] == aligned[1][i]):
+            f.write("M")
+            amount_m += 1
+        elif(aligned[0][i] == "-"):
+            f.write("I")
+            amount_i += 1
+        elif(aligned[1][i] == "-"):
+            f.write("D")
+            amount_d += 1
+        else:
+            f.write("R")
+            amount_r += 1
+
+    f.write("\n")
+    f.write("\nM -> Match ..................... Amount: ")
+    f.write(str(amount_m))
+    f.write("\nI -> Insertion ................. Amount: ")
+    f.write(str(amount_i))
+    f.write("\nD -> Deletion .................. Amount: ")
+    f.write(str(amount_d))
+    f.write("\nR -> Replacement (Mismatch) .... Amount: ")
+    f.write(str(amount_r))
+
+    # writes the used algorithm parameters
+    f.write("\n\nused Algorithm parameters:")
+    f.write("\nMatch score = \t\t")
+    f.write(str(s[0]))
+    f.write("\nMismatch score = \t")
+    f.write(str(s[1]))
+    f.write("\nGap Penalty = \t\t")
+    f.write(str(d))
+
+    # writes the time needed to finish the algorithm
+    f.write("\n\nTime the algorithm needed to compute the alignment: ")
+    f.write(str(duration))
+    f.write(" ms")
+
+    f.close()
 
 
 def main():
@@ -295,6 +352,9 @@ def main():
         # get the parameters from command line input
         parameters = read_arguments()
 
+        # starts counting time
+        t1_start = process_time()
+
         # get the two sequences
         seq1 = "".join(extract_headings_sequences(file1)[1][0])
         seq2 = "".join(extract_headings_sequences(file2)[1][0])
@@ -309,7 +369,15 @@ def main():
         matrix = compute(seq1, seq2, s, d)
 
         # calculates one alignment and the optimal score
-        traceback(matrix, seq1, seq2)
+        aligned = traceback(matrix, seq1, seq2)
+
+        # ends counting time and calculates duration
+        t1_stop = process_time()
+        duration_s = t1_stop-t1_start
+        duration_ms = duration_s * 1000
+
+        # prints all information an a file
+        make_file(aligned, matrix, s, d, duration_ms)
 
     else:
         print("wrong files format. The sequences have to contain just nucleotides")
