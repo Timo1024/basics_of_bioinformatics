@@ -150,11 +150,31 @@ def compute(seq1, seq2, s, d):
     gets the two sequences seq1 and seq2, 
     the scoring matrix s with match and mismatch scores and
     the gap penalty score d
+    computes the dynamic programming matrix with the Needleman-Wunsch algorithm
     returns the dynamic programming matrix
     in this matrix the traceback is included
     '''
 
+    # length of first sequence
+    n = len(seq1)
+
+    # length of second sequnce
+    m = len(seq2)
+
+    # initialize matrix array
     matrix = []
+    for j in range(m):
+        matrix.append([])
+        for i in range(n):
+            matrix[j].append([])
+
+    # print(matrix)
+
+
+    # initialize matrix values
+    for i in range(n):
+        
+
 
     ###########
 
