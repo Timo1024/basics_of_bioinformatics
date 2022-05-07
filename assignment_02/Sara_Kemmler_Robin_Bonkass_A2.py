@@ -435,8 +435,7 @@ def main():
 
 
 if __name__ == "__main__":
-    # TODO uncomment
-    # try:
+    try:
         args = create_parser()
         
         # accesing the path of the files
@@ -444,5 +443,5 @@ if __name__ == "__main__":
         print(args.file_two)
 
         main()
-    # except:
-    #     print('Try:  python3 Sara_Kemmler_Robin_Bonkass_A2.py -f1 yersenia_1.fasta -f2 yersenia_2.fasta')
+    except:
+        print('Try:  python3 Sara_Kemmler_Robin_Bonkass_A2.py -f1 yersenia_1.fasta -f2 yersenia_2.fasta')
