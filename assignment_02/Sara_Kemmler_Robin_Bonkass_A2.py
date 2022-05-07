@@ -281,7 +281,7 @@ def make_file(aligned, matrix, s, d, duration):
     for i in range(len(aligned[0])):
         match_string += "|"
 
-    f = open("aligned_sequnces.txt", "w")
+    f = open("aligned_sequences.txt", "w")
     f.write("------------------------------------------------------------------\nOne possible global Alignment with optimal alignment score ")
     f.write(str(matrix[len(matrix)-1][len(matrix[0])-1][0]))
     f.write(":\n------------------------------------------------------------------\n\n")
