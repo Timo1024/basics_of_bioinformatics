@@ -38,6 +38,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 """
 
+from asyncio.windows_events import NULL
 import numpy as np
 import argparse
 
@@ -57,71 +58,73 @@ def create_parser():
     return(p.parse_args())
 
 
-def nw(x, y, match=1, mismatch=1, gap=1):
-    """
-    Computation of the Needleman-Wunsch algorith
+class alignment:
+    def __init__(self, first_seq, second_seq, s, d) -> None:
+        self.first = first_seq
+        self.second = second_seq
+        self.s = s
+        self.d = d
 
-    Args:
-        x (string): Sequence 1 to align
-        y (string): Sequence 2 to align
-        match (int, optional): Match score. Defaults to 1.
-        mismatch (int, optional): Mismatch score. Defaults to 1.
-        gap (int, optional): Gap penalty. Defaults to 1.
+    def compute(self):
+        '''
+        gets the two sequences seq1 and seq2, 
+        the scoring matrix s with match and mismatch scores and
+        the gap penalty score d
+        computes the dynamic programming matrix with the Needleman-Wunsch algorithm
+        returns the dynamic programming matrix
+        in this matrix the traceback is included
+        '''
 
-    Returns:
-        string: alignment
-    """
-    nx = len(x)
-    ny = len(y)
-    # Optimal score at each possible pair of characters.
-    F = np.zeros((nx + 1, ny + 1))
-    F[:, 0] = np.linspace(0, -nx, nx + 1)
-    F[0, :] = np.linspace(0, -ny, ny + 1)
-    # Pointers to trace through an optimal aligment.
-    P = np.zeros((nx + 1, ny + 1))
-    P[:, 0] = 3
-    P[0, :] = 4
-    # Temporary scores.
-    t = np.zeros(3)
-    for i in range(nx):
-        for j in range(ny):
-            if x[i] == y[j]:
-                t[0] = F[i, j] + match
-            else:
-                t[0] = F[i, j] - mismatch
-            t[1] = F[i, j+1] - gap
-            t[2] = F[i+1, j] - gap
-            tmax = np.max(t)
-            F[i+1, j+1] = tmax
-            if t[0] == tmax:
-                P[i+1, j+1] += 2
-            if t[1] == tmax:
-                P[i+1, j+1] += 3
-            if t[2] == tmax:
-                P[i+1, j+1] += 4
-    # Trace through an optimal alignment.
-    i = nx
-    j = ny
-    rx = []
-    ry = []
-    while i > 0 or j > 0:
-        if P[i, j] in [2, 5, 6, 9]:
-            rx.append(x[i-1])
-            ry.append(y[j-1])
-            i -= 1
-            j -= 1
-        elif P[i, j] in [3, 5, 7, 9]:
-            rx.append(x[i-1])
-            ry.append('-')
-            i -= 1
-        elif P[i, j] in [4, 6, 7, 9]:
-            rx.append('-')
-            ry.append(y[j-1])
-            j -= 1
-    # Reverse the strings.
-    rx = ''.join(rx)[::-1]
-    ry = ''.join(ry)[::-1]
-    return '\n'.join([rx, ry])
+        # length of first sequence
+        n = len(self.first)
+
+        # length of second sequnce
+        m = len(self.second)
+
+        # initialize matrix array
+        matrix = []
+        for j in range(m+1):
+            matrix.append([])
+            for i in range(n+1):
+                matrix[j].append([0,[0,0]])
+
+        # initialize matrix values
+        for i in range(n+1):
+                matrix[0][i] = [-i * self.d, [i-1, 0]]
+        for j in range(m+1):
+            matrix[j][0] = [-j * self.d, [0, j-1]]
+
+        # iterates through all fields of the matrix
+        for i in range(1,n+1):
+            for j in range(1,m+1):
+
+                # calculate if match or mismatch
+                if(self.first[i-1] == self.second[j-1]):
+                    score = self.s[0]
+                else:
+                    score = self.s[1]
+
+                # calculate maximum
+                maximum = max(matrix[j-1][i-1][0] + score, matrix[j-1][i][0]-self.d, matrix[j][i-1][0]-self.d)
+
+                # sets the max value in the matrix and the traceback
+                if(maximum == matrix[j-1][i-1][0] + score):
+                    matrix[j][i] = [maximum, [i-1,j-1]]
+                elif(maximum == matrix[j-1][i][0]-self.d):
+                    matrix[j][i] = [maximum, [i,j-1]]
+                else:
+                    # maximum == matrix[j][i-1][0]-d could be condition here
+                    matrix[j][i] = [maximum, [i-1,j]]
+
+        return matrix
+
+    def getScore(self):
+        matrix = self.compute()
+        return matrix[len(matrix)-1][len(matrix[0])-1][0]
+
+    def getAlignment(self):
+        # TODO
+        pass
 
 
 def extract_headings_sequences(file):
@@ -155,6 +158,49 @@ def extract_headings_sequences(file):
     return [heading_array, sequence_array_concat]
 
 
+def read_arguments():
+    '''
+    reads the match/mismatch and gap penalty from the command line
+    '''
+
+    input_1 = False
+    input_2 = False
+    input_3 = False
+
+    match = 0
+    mismatch = 0
+    gap = 0
+
+    # gets input for matching score
+    while(not input_1):
+        match = input("Type the score for a matching pair:")
+        try:
+            match = int(match)
+            input_1 = True
+        except:
+            print("Wrong input")
+
+    # gets input for mismatching score
+    while(not input_2):
+        mismatch = input("Type the score for a mismatch:")
+        try:
+            mismatch = int(mismatch)
+            input_2 = True
+        except:
+            print("Wrong input")
+
+    # gets input for gap penalty
+    while(not input_3):
+        gap = input("Type the score for gap penalty:")
+        try:
+            gap = int(gap)
+            input_3 = True
+        except:
+            print("Wrong input")
+
+    return [match, mismatch, gap]
+
+
 def main():
     """
     The main function should contain all functions that solved the stated tasks.
@@ -165,7 +211,44 @@ def main():
     # extracting the sequences of the file into one array
     file1 = args.file_one
     sequences = extract_headings_sequences(file1)[1]
-    print(sequences)
+
+    # reads parameters for the alignment
+    parameters = read_arguments()
+
+    # scoring matrix [match score, mismatch score]
+    s = [parameters[0], parameters[1]]
+
+    # gap penalty d
+    d = parameters[2]
+
+    # save all possible two sequences to align in an align object array
+    all_alignments = []
+    for i in range(len(sequences)):
+        for j in range(len(sequences)-i-1):
+            new_alignment = alignment(sequences[i], sequences[len(sequences)-j-1], s, d)
+            all_alignments.append(new_alignment)
+
+    # get all scores in one array
+    scores = []
+    for align in all_alignments:
+        scores.append(align.getScore())
+
+    # get alignment with max score (A*max)
+    max_score_index = np.argmax(scores)
+    max_alignment = all_alignments[max_score_index]
+
+    # get alignment of the other two sequences (A*rest)
+    a_1 = set([max_alignment.first, max_alignment.second])
+    rest_alignment = NULL
+    for align in all_alignments:
+        a_2 = set([align.first, align.second])
+        if not a_1.intersection(a_2):
+            rest_alignment = align
+    
+    print(rest_alignment.first)
+    print(rest_alignment.second)
+    print(max_alignment.first)
+    print(max_alignment.second)
 
     # T3
 
