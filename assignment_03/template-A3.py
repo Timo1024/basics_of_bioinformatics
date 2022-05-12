@@ -125,8 +125,8 @@ def nw(x, y, match=1, mismatch=1, gap=1):
 
 
 def main():
-    """  
-    The main function should contain all functions that solved the stated tasks. 
+    """
+    The main function should contain all functions that solved the stated tasks.
     """
 
     # T2
