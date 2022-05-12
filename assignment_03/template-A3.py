@@ -124,12 +124,48 @@ def nw(x, y, match=1, mismatch=1, gap=1):
     return '\n'.join([rx, ry])
 
 
+def extract_headings_sequences(file):
+    '''
+    saves all headings and sequences in two arrays
+    '''
+
+    heading_array  = []
+    sequence_array = []
+    with open(file) as file_content:
+        for line in file_content:
+            normal_line = line
+            line = line[:line.rfind("\n")]
+            if(not normal_line.endswith("\n")):
+                line = normal_line
+            if(line.startswith(">")):
+                heading_array.append(line)
+            else:
+                if(len(sequence_array) != len(heading_array)):
+                    sequence_array.append([])
+                sequence_array[len(heading_array)-1].append(line)
+
+    # concats all line which represent one sequence
+    sequence_array_concat = []
+    for sequence in sequence_array:
+        seq = ""
+        for line in sequence:
+            seq += line
+        sequence_array_concat.append(seq)
+
+    return [heading_array, sequence_array_concat]
+
+
 def main():
     """
     The main function should contain all functions that solved the stated tasks.
     """
 
     # T2
+
+    # extracting the sequences of the file into one array
+    file1 = args.file_one
+    sequences = extract_headings_sequences(file1)[1]
+    print(sequences)
 
     # T3
 
@@ -139,11 +175,12 @@ def main():
 
 
 if __name__ == "__main__":
-    try:
+    # try:
         args = create_parser()
         # accesing the path of the files
         print(args.file_one)
 
         main()
-    except:
-        print('Try:  python3 template-A3.py -f1 to_msa.fasta')
+    # except:
+        # TODO change file name and uncomment try-except
+        # print('Try:  python3 template-A3.py -f1 to_msa.fasta')
