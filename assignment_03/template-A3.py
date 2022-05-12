@@ -158,6 +158,47 @@ def extract_headings_sequences(file):
     return [heading_array, sequence_array_concat]
 
 
+def find_max_and_rest(all_alignments):
+    '''
+    finds the alignment with the maximal score from the given alignments in all_alignments
+    and gives the alignment of the two other sequences back
+    '''
+
+    # get all scores in one array
+    scores = []
+    for align in all_alignments:
+        scores.append(align.getScore())
+
+    # get alignment with max score (A*max)
+    max_score_index = np.argmax(scores)
+    max_alignment = all_alignments[max_score_index]
+
+    # get alignment of the other two sequences (A*rest)
+    a_1 = set([max_alignment.first, max_alignment.second])
+    rest_alignment = NULL
+    for align in all_alignments:
+        a_2 = set([align.first, align.second])
+        if not a_1.intersection(a_2):
+            rest_alignment = align
+
+    return [max_alignment, rest_alignment]
+
+
+def find_cross(max_rest):
+    '''
+    find the A*cross alignment
+    '''
+
+    s = max_rest[0][0].s
+    d = max_rest[0][0].d
+
+    # make all possible alignments between
+    new_alignments = []
+    # TODO make possible alignments (expect more than two sequences per alignment)
+
+    pass
+
+
 def read_arguments():
     '''
     reads the match/mismatch and gap penalty from the command line
@@ -228,33 +269,20 @@ def main():
             new_alignment = alignment(sequences[i], sequences[len(sequences)-j-1], s, d)
             all_alignments.append(new_alignment)
 
-    # get all scores in one array
-    scores = []
-    for align in all_alignments:
-        scores.append(align.getScore())
-
-    # get alignment with max score (A*max)
-    max_score_index = np.argmax(scores)
-    max_alignment = all_alignments[max_score_index]
-
-    # get alignment of the other two sequences (A*rest)
-    a_1 = set([max_alignment.first, max_alignment.second])
-    rest_alignment = NULL
-    for align in all_alignments:
-        a_2 = set([align.first, align.second])
-        if not a_1.intersection(a_2):
-            rest_alignment = align
+    # finds A*max and A*rest
+    max_rest = find_max_and_rest(all_alignments)
     
-    print(rest_alignment.first)
-    print(rest_alignment.second)
-    print(max_alignment.first)
-    print(max_alignment.second)
+    print(max_rest[1].first)
+    print(max_rest[1].second)
+    print(max_rest[0].first)
+    print(max_rest[0].second)
+
+    # finds A*cross
+    cross = find_cross(max_rest)
 
     # T3
 
-    # pass is used when a function is not completely difened.
-    # Remove it once you have started with the assignnment.
-    pass
+
 
 
 if __name__ == "__main__":
