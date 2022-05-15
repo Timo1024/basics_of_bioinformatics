@@ -1,8 +1,41 @@
+"""
+
+Bioinformatics
+Assignment 3
+Excercise 3: Profile Alignment
+
+Robin Bonkaß
+Sara Kemmler
+
+you can give a .fasta file with multiple sequences via command in the command 
+line. The program extracts all sequences from the given file. It allways
+searches for the two best fitting sequences and aligns them or their existing
+profile alignments. Then it uses the next two best fitting ones. After all
+of the sequences were aligned one with each other the program starts again. But
+now with the calculated profile alignments. The two sequences used to align two
+profile alignments are the sequences which get the best score when aligned
+pairwise.
+
+The program is functional for as many sequences as you provide. Esecially, the
+number of alignments doesn't have to be a power of 2. Because if there is one
+sequence (at the start) or one profile alignment left over, which can't be
+aligned with another one, it just gets used in the next iteration as it is.
+
+The program finishes if just one profile alignment is left over. It returns
+the resulting alignment in the command line and prints it to a .txt file
+named profile_alignment.txt.
+
+To start the program type:
+python3 profile_alignment.py -f1 to_msa.fasta
+
+"""
+
+
 from pa_lib import *
 
 def main():
     """
-    Task 2
+    Task 3
     """
 
     '''
@@ -71,7 +104,6 @@ def main():
 
     # prints results in profile_alignment.txt
     make_file(paList[0].seqs, s, d, file1, sequences)
-
 
 
 if __name__ == "__main__":
