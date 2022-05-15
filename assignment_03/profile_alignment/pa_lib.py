@@ -165,3 +165,45 @@ def calc_scross(paList, s, d):
     return [newpaList, [max_pas[max_score_index][0], max_seqs[max_score_index][0]], [max_pas[max_score_index][1], max_seqs[max_score_index][1]]]
 
             
+def make_file(pa, s, d, file1, sequences):
+    '''
+    makes a file called profile_alignment.txt
+    it saves the profile alignment of the given sequences
+    and shows the used parameters
+    '''
+
+    f = open("profile_alignment.txt", "w")
+    heading = "------------------------------------------------------------------\nProfile Alignment of the "
+    heading += str(len(sequences))
+    heading += " given Sequences from file "
+    heading += file1
+    f.write(heading)
+    f.write(":\n------------------------------------------------------------------\n\n")
+
+    # make arrays of length 60 of every string
+    aligned_pa = []
+    for i in pa:
+        aligned_pa.append([])
+
+    for i in range(len(pa)):
+        for j in range(0, len(pa[0]), 60):
+            aligned_pa[i].append(pa[i][j:j+60])
+
+    # writes all sequences on top of each other to see the alignemnt
+    print(aligned_pa)
+    for i in range(len(aligned_pa[0])):
+        for j in range(len(aligned_pa)):
+            f.write(aligned_pa[j][i])
+            f.write("\n")
+        f.write("\n")
+
+    # writes the used algorithm parameters
+    f.write("\nused Algorithm parameters:")
+    f.write("\nMatch score = \t\t")
+    f.write(str(s[0]))
+    f.write("\nMismatch score = \t")
+    f.write(str(s[1]))
+    f.write("\nGap Penalty = \t\t")
+    f.write(str(d))
+
+    f.close()

@@ -69,7 +69,8 @@ def main():
         print(i)
     print("")
 
-    # TODO make nice looking output (maybe in new .txt file)
+    # prints results in profile_alignment.txt
+    make_file(paList[0].seqs, s, d, file1, sequences)
 
 
 
