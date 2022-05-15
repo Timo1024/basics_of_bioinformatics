@@ -1,5 +1,14 @@
+"""
+classes used in the code
+"""
 
 class pair_alignment:
+    """
+    class for a pair alignment
+    initializes with two seqences and the scoring matrix s
+    and gap penalty d
+    """
+
     def __init__(self, seq1, seq2, s, d) -> None:
         self.first = seq1
         self.second = seq2
@@ -68,50 +77,7 @@ class pair_alignment:
         '''
         matrix = self.compute()
         return matrix[len(matrix)-1][len(matrix[0])-1][0]
-
-    def getAlignment(self):
-        '''
-        returns array with the new strings (aligned seq1 and seq2)
-        '''
-        matrix = self.compute()
-
-        # initializing some variables
-        start_i = len(matrix)-1
-        start_j = len(matrix[0])-1
-
-        seq1_aligned = ""
-        seq2_aligned = ""
-
-        old_i = len(matrix)-1
-        old_j = len(matrix[0])-1
-
-        count = 0
-
-        # going from (n,m) backwards until we are at (0,0)
-        while(start_j != -1 and start_i != -1):
-            
-            if(old_i == start_i and (count != 0)):
-                seq2_aligned += "-"
-                seq1_aligned += self.first[old_j-1]
-            elif(old_j == start_j and (count != 0)):
-                seq1_aligned += "-"
-                seq2_aligned += self.second[old_i-1]
-            elif(count != 0):
-                seq1_aligned += self.first[old_j-1]
-                seq2_aligned += self.second[old_i-1]
-
-            count += 1
-            old_j = start_j
-            old_i = start_i
-
-            start_i = matrix[old_i][old_j][1][1]
-            start_j = matrix[old_i][old_j][1][0]
-
-        # reversing the strings
-        seq1_aligned = seq1_aligned[::-1]
-        seq2_aligned = seq2_aligned[::-1]
-
-        return [seq1_aligned, seq2_aligned]
+        
 
     def getAlignmentPa(self, pa1, pa2):
         '''
@@ -203,28 +169,19 @@ class pair_alignment:
 
 
 class profile_alignment:
+    """
+    class for a profile alignment
+    initializes with all sequences which build the
+    profile alignment
+    """
+
     def __init__(self, aligned_seqs) -> None:
         self.seqs = aligned_seqs
 
     def getID(self):
-        # combines all sequences so that in calc_scross 
-        # the used pas can be found and be removed
+        '''
+        combines all sequences so that in calc_scross 
+        the used pas can be found and be removed
+        '''
+        
         return "".join(self.seqs)
-
-    def getGapped(self, seq):
-        '''
-        returns the aligned_seqs with the inserted gap, where seq has the gaps
-        '''
-        # TODO use old seq to see where the new gaps are b/c there could be gaps before the alignment too
-        # init new array
-        seqs_gapped = []
-        for x in self.seqs:
-            seqs_gapped.append("")
-        for i in range(len(seq)):
-            if(seq[i] != "-"):
-                for k in range(len(seqs_gapped)):
-                    seqs_gapped[k] += seq[i]
-            else:
-                for k in range(len(seqs_gapped)):
-                    seqs_gapped[k] += "-"
-        return seqs_gapped
