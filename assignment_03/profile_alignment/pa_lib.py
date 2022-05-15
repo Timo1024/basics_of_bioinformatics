@@ -146,10 +146,22 @@ def calc_scross(paList, s, d):
     # look which score was the highest
     max_score_index = np.argmax(max_scores)
     newpaList = []
+
+    first_occurance_1 = False
+    first_occurance_2 = False
+
     for pa in paList:
-        if(pa.getID() != max_pas[max_score_index][0].getID() and pa.getID() != max_pas[max_score_index][1].getID()):
-            # FIXME darf nur einmal gelöscht werden, falls zwei gleiche Sequenzen exisieren
+        if((pa.getID() != max_pas[max_score_index][0].getID() or first_occurance_1) and (pa.getID() != max_pas[max_score_index][1].getID() or first_occurance_2)):
             newpaList.append(pa)
+
+        # checks if one of the used pas was detected and therefore not added to the newpaList
+        # sets the first occurance to True, so that if there is another equal sequence
+        # it adds it to the newpaList b/c we just want to delete the one we used for the max
+        # S_cross value
+        if(pa.getID() == max_pas[max_score_index][0].getID()):
+            first_occurance_1 = True
+        if(pa.getID() == max_pas[max_score_index][1].getID()):
+            first_occurance_2 = True
 
     return [newpaList, [max_pas[max_score_index][0], max_seqs[max_score_index][0]], [max_pas[max_score_index][1], max_seqs[max_score_index][1]]]
 
