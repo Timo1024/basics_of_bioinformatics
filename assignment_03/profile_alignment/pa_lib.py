@@ -190,7 +190,6 @@ def make_file(pa, s, d, file1, sequences):
             aligned_pa[i].append(pa[i][j:j+60])
 
     # writes all sequences on top of each other to see the alignemnt
-    print(aligned_pa)
     for i in range(len(aligned_pa[0])):
         for j in range(len(aligned_pa)):
             f.write(aligned_pa[j][i])
