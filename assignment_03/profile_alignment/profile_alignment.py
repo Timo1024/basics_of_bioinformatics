@@ -23,11 +23,20 @@ def main():
     d = parameters[2]
 
     paList = initialize_paList(sequences)
-    print(paList)
 
+    '''
+    loop through the building of the new pa list until there is just one pa left
+    '''
 
     while (len(paList) > 1):
         new_paList = []
+
+        '''
+        loop through the current pa list and calculate the highest s_cross
+        and then aligning the two pa's with the highest s_corss
+        until the pa list is empty and then use the new pa list as the pa list
+        '''
+
         while(len(paList) > 1):
 
             result = calc_scross(paList, s, d)
@@ -46,28 +55,32 @@ def main():
 
             new_paList.append(new_pa)
 
-            # print(paList)
-            # print(new_paList[0].seqs[0])
-            # print(new_paList[0].seqs[1])
-
+        # if there was an uneven number of pa's in the list, the last one
+        # gets no alignment and is just added to the new pa list as it is
         if(len(paList) == 1):
             new_paList.append(paList[0])
 
         paList = new_paList
 
+    # prints the sequences of the last pa in the command line
+    # so that you can see how the profile alignment looks like
+    print("")
     for i in paList[0].seqs:
         print(i)
+    print("")
+
+    # TODO make nice looking output (maybe in new .txt file)
 
 
 
 if __name__ == "__main__":
-    # try:
+    try:
         args = create_parser()
+
         # accesing the path of the files
         print(args.file_one)
 
         main()
-    # except:
-        # TODO change file name and uncomment try-except
-        # print('Try:  python3 template-A3.py -f1 to_msa.fasta')
+    except:
+        print('Try:  python3 profile_alignment.py -f1 to_msa.fasta')
 
