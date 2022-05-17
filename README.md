@@ -6,3 +6,8 @@ Reading and Writing Sequences in FASTA Format. Calculating the reverse complemen
 
 # Assignemnt 2
 Calculating one global alignment of two sequences using the Needleman-Wunsch algorithm
+
+# Assignment 3
+Calculating a MSA with profile aignments.
+
+Calculating a distance matrix with the Feng-Doolittle distance
