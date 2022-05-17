@@ -150,9 +150,6 @@ class pair_alignment:
         returns the S_rand Score for the two Sequences
         '''
 
-        # FIXME check if the last part of the formula to calculate the S_rand Score
-        # - N(g)*d is inside the sums or is substracted at the end after the sum!!!
-
         # first sequence
         X = self.first
 
@@ -170,7 +167,7 @@ class pair_alignment:
         aligned_sequences = self.getAlignment()
 
         # length of aligned sequences
-        L = len(aligned_sequences[0]) * 2
+        L = len(aligned_sequences[0])
 
         # calculate number of gaps in optimal alignment
         Ng = 0
@@ -183,24 +180,27 @@ class pair_alignment:
 
         # calculate how often every residue appears in the two sequences
         dict_N = {}
-        dict_N[X] = {}
-        dict_N[Y] = {}
+        dict_N["X"] = {}
+        dict_N["Y"] = {}
 
         for i in range(len(X)):
             try:
-                dict_N[X][X[i]] += 1
+                dict_N["X"][X[i]] += 1
             except:
-                dict_N[X][X[i]] = 1
+                dict_N["X"][X[i]] = 1
         for i in range(len(Y)):
             try:
-                dict_N[Y][Y[i]] += 1
+                dict_N["Y"][Y[i]] += 1
             except:
-                dict_N[Y][Y[i]] = 1
+                dict_N["Y"][Y[i]] = 1
 
         # calculate S_rand
         Srand = 0
         for i in range(len(X)):
             for j in range(len(Y)):
+
+                # we dont have to check the gap - gap match b/c
+                # we dont have gaps in the given sequences
                 if(X[i] == Y[j] == "-"):
                     score = 0
                 elif(X[i] == Y[j]):
@@ -210,13 +210,14 @@ class pair_alignment:
 
                 Srand += (
                     score *
-                    dict_N[X][X[i]] *
-                    dict_N[Y][Y[j]]
+                    dict_N["X"][X[i]] *
+                    dict_N["Y"][Y[j]]
                 )
 
-        Srand = (1/L) * (Srand) - Ng * d
-
-        # FIXME soll Ng*d in jedem summanden subtrahiert werden oder nur einmal zum Schluss?
+        # from the formula in the assignment, you can hardly tell whether
+        # the Ng * d should be inside the sum or added at the end after the
+        # sum was calculated
+        Srand = (1/L) * (Srand) - (Ng * d)
 
         return Srand
 

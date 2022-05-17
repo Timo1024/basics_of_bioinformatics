@@ -123,7 +123,6 @@ class alignment:
         return matrix[len(matrix)-1][len(matrix[0])-1][0]
 
     def getAlignment(self):
-        # TODO
         pass
 
 
@@ -194,8 +193,7 @@ def find_cross(max_rest):
 
     # make all possible alignments between
     new_alignments = []
-    # TODO make possible alignments (expect more than two sequences per alignment)
-
+    
     pass
 
 
@@ -293,5 +291,4 @@ if __name__ == "__main__":
 
         main()
     # except:
-        # TODO change file name and uncomment try-except
         # print('Try:  python3 template-A3.py -f1 to_msa.fasta')

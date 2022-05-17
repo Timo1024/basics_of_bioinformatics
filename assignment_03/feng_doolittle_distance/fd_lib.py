@@ -1,7 +1,6 @@
 import argparse
 from fd_classes import *
 import math
-# TODO dürfen wir math library benutzen?
 
 '''
 Here are all functions which are used in the main file
@@ -10,7 +9,6 @@ Here are all functions which are used in the main file
 def create_parser():
     '''
     Creates a argument parser to facilitate file reading.
-
     '''
     # Make parser object
     p = argparse.ArgumentParser(description=__doc__,
@@ -35,7 +33,6 @@ def read_arguments(args):
     '''
     reads the match/mismatch and gap penalty from the command line
     '''
-
     return [int(args.score_AA), int(args.score_AB), int(args.gap_penalty)]
 
 
@@ -75,7 +72,6 @@ def make_file(matrix, s, d, file1, sequences):
     prints the distance matrix to the command line
     and to a file named file1
     '''
-    # TODO print matrix to file
 
     print("----------------------")
     print("The distance Matrix D:")
@@ -86,7 +82,7 @@ def make_file(matrix, s, d, file1, sequences):
             if(j == "-"):
                 print("-", end="")
             else:
-                print(round(j, 3), end = "")
+                print(round(j, 4), end = "")
             print("\t", end = "")
         print("\n")
 
@@ -112,7 +108,7 @@ def make_file(matrix, s, d, file1, sequences):
             if(j == "-"):
                 f.write("-\t")
             else:
-                f.write(str(round(j, 3)))
+                f.write(str(round(j, 4)))
             f.write("\t")
         f.write(" |\n")
 
@@ -141,9 +137,6 @@ def calc_distance_matrix(sequences, s, d):
     '''
     matrix = []
 
-    # TODO reicht es aus, wenn man eine Hälfte und nicht die Diagonale in der
-    # Matrix ausfüllt?
-
     for i in range(len(sequences)):
         matrix.append([])
         for j in range(len(sequences)):
@@ -157,12 +150,12 @@ def calc_distance_matrix(sequences, s, d):
             new_alignment = pair_alignment(sequences[i_index], sequences[j_index], s, d)
 
             # calculating the distance score of the two sequences
+            # Logarithm is with base e
             fd = -math.log(
                 (new_alignment.getSobs() - new_alignment.getSrand())/
                 (new_alignment.getSid() - new_alignment.getSrand()))
 
-            # FIXME kommt bei Log am Ende noch ein Parameter 10 hinzu oder soll
-            # der natürliche log benutzt werden?
+            print(new_alignment.getSrand())
 
             matrix[i_index][j_index] = fd
 

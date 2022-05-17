@@ -9,8 +9,6 @@ Sara Kemmler
 
 TODO description of code
 
-TODO alle Argumente mit erstem Aufruf über geben (mit -sAA -sAB -d usw.)
-
 """
 
 # TODO delete in all files unused imports
@@ -19,9 +17,6 @@ from ctypes import alignment
 from fd_lib import *
 
 def main():
-
-    # TODO delete this link at the end (it shows exactly how to calc feng doolittle)
-    # http://rna.informatik.uni-freiburg.de/Teaching/index.jsp?toolName=Feng-Doolittle
 
     """
     Task 3
@@ -46,17 +41,16 @@ def main():
 
     matrix = calc_distance_matrix(sequences, s, d)
 
-    # prints results in profile_alignment.txt
+    # prints results in distance_matrix.txt
     make_file(matrix, s, d, file1 , sequences)
 
 if __name__ == "__main__":
-    # TODO uncomment and correct exception output
-    # try:
+    try:
         args = create_parser()
 
         # accesing the path of the files
         print(args.file_one)
 
         main()
-    # except:
-    #     print('Try:  python3 feng_doolittle.py -sAA 3 -sAB -2 -d 4 -f1 to_msa.fasta')
+    except:
+        print('Try:  python3 feng_doolittle.py -sAA 3 -sAB -2 -d 4 -f1 to_msa.fasta')
