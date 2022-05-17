@@ -37,12 +37,6 @@ def main():
     # gap penalty d
     d = parameters[2]
 
-    alignemnt_01 = pair_alignment(
-        "ACGACAGCGATTAGCGAC",
-        "CAGCATAGACGACAGATACGAC",
-        s, 
-        d)
-
     matrix = calc_distance_matrix(sequences, s, d)
 
     # prints results in profile_alignment.txt
@@ -58,4 +52,4 @@ if __name__ == "__main__":
 
         main()
     # except:
-    #     print('Try:  python3 feng_doolittle.py -f1 to_msa_feng_doolittle.fasta')
+    #     print('Try:  python3 feng_doolittle.py -f1 to_msa.fasta')
