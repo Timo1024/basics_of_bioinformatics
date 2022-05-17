@@ -32,7 +32,7 @@ def main():
     sequences = extract_headings_sequences(file1)[1]
 
     # reads parameters for the alignment
-    parameters = read_arguments()
+    parameters = read_arguments(args)
 
     # scoring matrix [match score, mismatch score]
     s = [parameters[0], parameters[1]]
@@ -46,7 +46,7 @@ def main():
     make_file(matrix, s, d, file1 , sequences)
 
 if __name__ == "__main__":
-    # TODO uncomment
+    # TODO uncomment and correct exception output
     # try:
         args = create_parser()
 
@@ -55,4 +55,4 @@ if __name__ == "__main__":
 
         main()
     # except:
-    #     print('Try:  python3 feng_doolittle.py -f1 to_msa.fasta')
+    #     print('Try:  python3 feng_doolittle.py -sAA 3 -sAB -2 -d 4 -f1 to_msa.fasta')

@@ -18,50 +18,24 @@ def create_parser():
     p.add_argument('-f1', '--file-one',
                    help="File for the the programming task")
 
+    p.add_argument('-sAA', '--score-AA',
+                    help="score for matching pair")
+
+    p.add_argument('-sAB', '--score-AB',
+                    help="score for mismatching pair")
+
+    p.add_argument('-d', '--gap-penalty',
+                    help="score for the gap penalty")
+
     return(p.parse_args())
 
 
-def read_arguments():
+def read_arguments(args):
     '''
     reads the match/mismatch and gap penalty from the command line
     '''
 
-    input_1 = False
-    input_2 = False
-    input_3 = False
-
-    match = 0
-    mismatch = 0
-    gap = 0
-
-    # gets input for matching score
-    while(not input_1):
-        match = input("Type the score for a matching pair:")
-        try:
-            match = int(match)
-            input_1 = True
-        except:
-            print("Wrong input")
-
-    # gets input for mismatching score
-    while(not input_2):
-        mismatch = input("Type the score for a mismatch:")
-        try:
-            mismatch = int(mismatch)
-            input_2 = True
-        except:
-            print("Wrong input")
-
-    # gets input for gap penalty
-    while(not input_3):
-        gap = input("Type the score for gap penalty:")
-        try:
-            gap = int(gap)
-            input_3 = True
-        except:
-            print("Wrong input")
-
-    return [match, mismatch, gap]
+    return [int(args.score_AA), int(args.score_AB), int(args.gap_penalty)]
 
 
 def extract_headings_sequences(file):

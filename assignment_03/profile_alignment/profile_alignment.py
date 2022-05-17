@@ -47,7 +47,7 @@ def main():
     sequences = extract_headings_sequences(file1)[1]
 
     # reads parameters for the alignment
-    parameters = read_arguments()
+    parameters = read_arguments(args)
 
     # scoring matrix [match score, mismatch score]
     s = [parameters[0], parameters[1]]
@@ -115,5 +115,6 @@ if __name__ == "__main__":
 
         main()
     except:
-        print('Try:  python3 profile_alignment.py -f1 to_msa.fasta')
+        # TODO correct exception output
+        print('Try:  python3 profile_alignment.py -sAA 3 -sAB -2 -d 4 -f1 to_msa.fasta')
 

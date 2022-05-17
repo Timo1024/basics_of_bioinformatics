@@ -4,13 +4,13 @@ used were 4 Sequences from file to_msa.fasta
 ------------------------------------------------------------------
 
  /									\
-|	-		0.001	0.001	0.001	 |
-|	-		-		0.001	0.001	 |
-|	-		-		-		0.001	 |
+|	-		0.001	0.002	0.002	 |
+|	-		-		0.002	0.002	 |
+|	-		-		-		0.002	 |
 |	-		-		-		-		 |
  \									/
 
 used Algorithm parameters:
 Match score = 		2
-Mismatch score = 	-3
+Mismatch score = 	-2
 Gap Penalty = 		4
