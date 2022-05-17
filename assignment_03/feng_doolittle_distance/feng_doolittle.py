@@ -19,6 +19,10 @@ from ctypes import alignment
 from fd_lib import *
 
 def main():
+
+    # TODO delete this link at the end (it shows exactly how to calc feng doolittle)
+    # http://rna.informatik.uni-freiburg.de/Teaching/index.jsp?toolName=Feng-Doolittle
+
     """
     Task 3
     """

@@ -211,11 +211,12 @@ class pair_alignment:
                 Srand += (
                     score *
                     dict_N[X][X[i]] *
-                    dict_N[Y][Y[j]] -
-                    Ng * d
+                    dict_N[Y][Y[j]]
                 )
 
-        Srand = (1/L) * Srand
+        Srand = (1/L) * (Srand) - Ng * d
+
+        # FIXME soll Ng*d in jedem summanden subtrahiert werden oder nur einmal zum Schluss?
 
         return Srand
 

@@ -159,7 +159,10 @@ def calc_distance_matrix(sequences, s, d):
             # calculating the distance score of the two sequences
             fd = -math.log(
                 (new_alignment.getSobs() - new_alignment.getSrand())/
-                (new_alignment.getSid() - new_alignment.getSrand()), 10)
+                (new_alignment.getSid() - new_alignment.getSrand()))
+
+            # FIXME kommt bei Log am Ende noch ein Parameter 10 hinzu oder soll
+            # der natürliche log benutzt werden?
 
             matrix[i_index][j_index] = fd
 
