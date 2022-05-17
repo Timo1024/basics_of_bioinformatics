@@ -19,6 +19,6 @@ CTTCATC-CCCACCGACGGCAGG-CACTTCG-TGAGCCAGACCACC
 
 
 used Algorithm parameters:
-Match score = 		2
-Mismatch score = 	-3
+Match score = 		3
+Mismatch score = 	-2
 Gap Penalty = 		4

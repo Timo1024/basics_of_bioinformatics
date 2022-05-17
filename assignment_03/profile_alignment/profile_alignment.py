@@ -16,7 +16,7 @@ now with the calculated profile alignments. The two sequences used to align two
 profile alignments are the sequences which get the best score when aligned
 pairwise.
 
-The program is functional for as many sequences as you provide. Esecially, the
+The program is functional for as many sequences as you provide. Especially, the
 number of alignments doesn't have to be a power of 2. Because if there is one
 sequence (at the start) or one profile alignment left over, which can't be
 aligned with another one, it just gets used in the next iteration as it is.
@@ -26,7 +26,7 @@ the resulting alignment in the command line and prints it to a .txt file
 named profile_alignment.txt.
 
 To start the program type:
-python3 profile_alignment.py -f1 to_msa.fasta
+python3 profile_alignment.py -sAA 3 -sAB -2 -d 4 -f1 to_msa.fasta
 
 """
 
@@ -115,6 +115,5 @@ if __name__ == "__main__":
 
         main()
     except:
-        # TODO correct exception output
         print('Try:  python3 profile_alignment.py -sAA 3 -sAB -2 -d 4 -f1 to_msa.fasta')
 
