@@ -9,8 +9,11 @@ Sara Kemmler
 
 TODO description of code
 
+TODO alle Argumente mit erstem Aufruf über geben (mit -sAA -sAB -d usw.)
+
 """
 
+# TODO delete in all files unused imports
 
 from ctypes import alignment
 from fd_lib import *
@@ -40,7 +43,7 @@ def main():
     matrix = calc_distance_matrix(sequences, s, d)
 
     # prints results in profile_alignment.txt
-    make_file(matrix, s, d, file1)
+    make_file(matrix, s, d, file1 , sequences)
 
 if __name__ == "__main__":
     # TODO uncomment

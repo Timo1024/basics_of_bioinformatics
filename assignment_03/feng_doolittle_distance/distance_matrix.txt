@@ -1,0 +1,16 @@
+------------------------------------------------------------------
+Distance Matrix using Feng-Doolittle distances for MSA
+used were 4 Sequences from file to_msa.fasta
+------------------------------------------------------------------
+
+ /									\
+|	-		0.001	0.001	0.001	 |
+|	-		-		0.001	0.001	 |
+|	-		-		-		0.001	 |
+|	-		-		-		-		 |
+ \									/
+
+used Algorithm parameters:
+Match score = 		2
+Mismatch score = 	-3
+Gap Penalty = 		4

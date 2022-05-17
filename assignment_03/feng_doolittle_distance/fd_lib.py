@@ -96,7 +96,7 @@ def extract_headings_sequences(file):
     return [heading_array, sequence_array_concat]
 
 
-def make_file(matrix, s, d, file1):
+def make_file(matrix, s, d, file1, sequences):
     '''
     prints the distance matrix to the command line
     and to a file named file1
@@ -115,6 +115,49 @@ def make_file(matrix, s, d, file1):
                 print(round(j, 3), end = "")
             print("\t", end = "")
         print("\n")
+
+    # makes file with the distance matrix
+    f = open("distance_matrix.txt", "w")
+
+    heading = "------------------------------------------------------------------\nDistance Matrix using Feng-Doolittle distances for MSA\nused were "
+    heading += str(len(sequences))
+    heading += " Sequences from file "
+    heading += file1
+    f.write(heading)
+    f.write("\n------------------------------------------------------------------\n\n")
+
+    top_matrix = " /\t"
+    for k in matrix[0]:
+        top_matrix += "\t\t"
+    top_matrix += "\\\n"
+    f.write(top_matrix)
+
+    for i in matrix:
+        f.write("|\t")
+        for j in i:
+            if(j == "-"):
+                f.write("-\t")
+            else:
+                f.write(str(round(j, 3)))
+            f.write("\t")
+        f.write(" |\n")
+
+    bottom_matrix = " \\\t"
+    for k in matrix[0]:
+        bottom_matrix += "\t\t"
+    bottom_matrix += "/\n"
+    f.write(bottom_matrix)
+
+    # writes the used algorithm parameters
+    f.write("\nused Algorithm parameters:")
+    f.write("\nMatch score = \t\t")
+    f.write(str(s[0]))
+    f.write("\nMismatch score = \t")
+    f.write(str(s[1]))
+    f.write("\nGap Penalty = \t\t")
+    f.write(str(d))
+
+    f.close()
 
 
 def calc_distance_matrix(sequences, s, d):
