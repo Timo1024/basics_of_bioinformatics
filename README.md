@@ -9,4 +9,5 @@ Calculating one global alignment of two sequences using the Needleman-Wunsch alg
 
 # Assignment 3
 Calculating a MSA with profile aignments.
+
 Calculating a distance matrix with the Feng-Doolittle distance
