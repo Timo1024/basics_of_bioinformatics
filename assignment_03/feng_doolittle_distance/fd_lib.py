@@ -26,6 +26,9 @@ def create_parser():
     p.add_argument('-d', '--gap-penalty',
                     help="score for the gap penalty")
 
+    p.add_argument('-display', '--display',
+                    help="0 = half matrix; 1 = half and diagonal entries; 2 = full matrix")
+
     return(p.parse_args())
 
 
@@ -33,7 +36,7 @@ def read_arguments(args):
     '''
     reads the match/mismatch and gap penalty from the command line
     '''
-    return [int(args.score_AA), int(args.score_AB), int(args.gap_penalty)]
+    return [int(args.score_AA), int(args.score_AB), int(args.gap_penalty), int(args.display)]
 
 
 def extract_headings_sequences(file):
@@ -130,7 +133,7 @@ def make_file(matrix, s, d, file1, sequences):
     f.close()
 
 
-def calc_distance_matrix(sequences, s, d):
+def calc_distance_matrix(sequences, s, d, display = 0):
     '''
     calculates the feng doolittle distance for every possible combination of
     the given sequences and saves them in an matrix
@@ -142,19 +145,36 @@ def calc_distance_matrix(sequences, s, d):
         for j in range(len(sequences)):
             matrix[i].append("-")
 
+    substract = 1
+    if(display == 1):
+        substract = 0
 
     for i in range(len(sequences)):
-        for j in range(len(sequences)-i-1):
-            i_index = i
-            j_index = len(sequences)-j-1
-            new_alignment = pair_alignment(sequences[i_index], sequences[j_index], s, d)
+        if(display != 2):
+            for j in range(len(sequences)-i-substract):
+                i_index = i
+                j_index = len(sequences)-j-1
+                new_alignment = pair_alignment(sequences[i_index], sequences[j_index], s, d)
 
-            # calculating the distance score of the two sequences
-            # Logarithm is with base e
-            fd = -math.log(
-                (new_alignment.getSobs() - new_alignment.getSrand())/
-                (new_alignment.getSid() - new_alignment.getSrand()))
+                # calculating the distance score of the two sequences
+                # Logarithm is with base e
+                fd = -math.log(
+                    (new_alignment.getSobs() - new_alignment.getSrand())/
+                    (new_alignment.getSid() - new_alignment.getSrand()))
 
-            matrix[i_index][j_index] = fd
+                matrix[i_index][j_index] = fd
+        else:
+            for j in range(len(sequences)):
+                i_index = i
+                j_index = len(sequences)-j-1
+                new_alignment = pair_alignment(sequences[i_index], sequences[j_index], s, d)
+
+                # calculating the distance score of the two sequences
+                # Logarithm is with base e
+                fd = -math.log(
+                    (new_alignment.getSobs() - new_alignment.getSrand())/
+                    (new_alignment.getSid() - new_alignment.getSrand()))
+
+                matrix[i_index][j_index] = fd
 
     return matrix

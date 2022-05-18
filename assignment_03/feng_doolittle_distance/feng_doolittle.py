@@ -16,7 +16,7 @@ fields, two equal sequences would be aligned, resulting in a trivial
 score of 0.
 
 Start the code with the following command:
-python3 feng_doolittle.py -sAA 3 -sAB -2 -d 4 -f1 to_msa.fasta
+python3 feng_doolittle.py -sAA 3 -sAB -2 -d 4 -display 0 -f1 to_msa.fasta
 
 """
 
@@ -45,7 +45,10 @@ def main():
     # gap penalty d
     d = parameters[2]
 
-    matrix = calc_distance_matrix(sequences, s, d)
+    # display matrix
+    display = parameters[3]
+
+    matrix = calc_distance_matrix(sequences, s, d, display)
 
     # prints results in distance_matrix.txt
     make_file(matrix, s, d, file1 , sequences)
@@ -60,4 +63,4 @@ if __name__ == "__main__":
 
         main()
     except:
-        print('Try:  python3 feng_doolittle.py -sAA 3 -sAB -2 -d 4 -f1 to_msa.fasta')
+        print('Try:  python3 feng_doolittle.py -sAA 3 -sAB -2 -d 4 -display 0 -f1 to_msa.fasta')
