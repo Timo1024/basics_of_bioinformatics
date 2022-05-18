@@ -155,8 +155,6 @@ def calc_distance_matrix(sequences, s, d):
                 (new_alignment.getSobs() - new_alignment.getSrand())/
                 (new_alignment.getSid() - new_alignment.getSrand()))
 
-            print(new_alignment.getSrand())
-
             matrix[i_index][j_index] = fd
 
     return matrix

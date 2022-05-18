@@ -30,7 +30,6 @@ python3 profile_alignment.py -sAA 3 -sAB -2 -d 4 -f1 to_msa.fasta
 
 """
 
-
 from pa_lib import *
 
 def main():
