@@ -71,6 +71,7 @@ class pair_alignment:
 
         return matrix
 
+
     def getScore(self):
         '''
         returns the score of the global alignment

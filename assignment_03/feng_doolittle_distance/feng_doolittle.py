@@ -20,8 +20,6 @@ python3 feng_doolittle.py -sAA 3 -sAB -2 -d 4 -f1 to_msa.fasta
 
 """
 
-# TODO delete in all files unused imports
-
 from fd_lib import *
 
 def main():
@@ -51,6 +49,7 @@ def main():
 
     # prints results in distance_matrix.txt
     make_file(matrix, s, d, file1 , sequences)
+
 
 if __name__ == "__main__":
     try:
