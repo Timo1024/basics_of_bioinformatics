@@ -197,11 +197,8 @@ class pair_alignment:
 
         # calculate S_rand
         Srand = 0
-        print("----------------------")
         for i in dict_N["X"]:
             for j in dict_N["Y"]:
-                str = "(", i, ",", j, ")"
-                print(str)
 
                 # we dont have to check the gap - gap match b/c
                 # we dont have gaps in the given sequences
@@ -217,7 +214,6 @@ class pair_alignment:
                     dict_N["X"][i] *
                     dict_N["Y"][j]
                 )
-        print("----------------------")
 
         # from the formula in the assignment, you can hardly tell whether
         # the Ng * d should be inside the sum or added at the end after the
