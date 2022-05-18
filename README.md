@@ -1,4 +1,4 @@
-# basics_of_bioinformatics
+# Basics of Bioinformatics
 Repo for the course "Grundlagen der Bioinformatik" at the Eberhard Karls Uni Tübingen
 
 # Assignment 1
