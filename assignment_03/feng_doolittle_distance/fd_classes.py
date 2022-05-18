@@ -197,23 +197,27 @@ class pair_alignment:
 
         # calculate S_rand
         Srand = 0
-        for i in range(len(X)):
-            for j in range(len(Y)):
+        print("----------------------")
+        for i in dict_N["X"]:
+            for j in dict_N["Y"]:
+                str = "(", i, ",", j, ")"
+                print(str)
 
                 # we dont have to check the gap - gap match b/c
                 # we dont have gaps in the given sequences
-                if(X[i] == Y[j] == "-"):
+                if(i == j == "-"):
                     score = 0
-                elif(X[i] == Y[j]):
+                elif(i == j):
                     score = match
                 else:
                     score = mismatch
 
                 Srand += (
                     score *
-                    dict_N["X"][X[i]] *
-                    dict_N["Y"][Y[j]]
+                    dict_N["X"][i] *
+                    dict_N["Y"][j]
                 )
+        print("----------------------")
 
         # from the formula in the assignment, you can hardly tell whether
         # the Ng * d should be inside the sum or added at the end after the
