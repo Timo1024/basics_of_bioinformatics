@@ -4,6 +4,7 @@
 # **/new_sequences.fasta
 # **/substitution_matrix.txt
 # **/*.zip
+**/to_zip/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
