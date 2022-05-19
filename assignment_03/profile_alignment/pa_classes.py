@@ -49,9 +49,11 @@ class pair_alignment:
         for i in range(1,n+1):
             for j in range(1,m+1):
 
-                # calculate if match or mismatch or gap-gap
+                # calculate if match or mismatch or gap-gap or gap-residue
                 if(self.first[i-1] == "-" and self.second[j-1] == "-"):
                     score = 0
+                elif(self.first[i-1] == "-" or self.second[j-1] == "-"):
+                    score = -self.d
                 elif(self.first[i-1] == self.second[j-1]):
                     score = self.s[0]
                 else:
