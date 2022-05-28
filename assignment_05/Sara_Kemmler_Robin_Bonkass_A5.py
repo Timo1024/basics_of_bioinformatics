@@ -4,11 +4,10 @@ Robin Bonkaß
 Sara Kemmler
 '''
 
-import argparse
-import copy
-from math import sqrt
+# TODO delete: https://www.researchgate.net/publication/262747089_A_cophenetic_correlation_coefficient_for_Tocher's_method
 
-import numpy as np
+import argparse
+from math import sqrt
 
 def print_matrix(matrix, full = False):
     '''
