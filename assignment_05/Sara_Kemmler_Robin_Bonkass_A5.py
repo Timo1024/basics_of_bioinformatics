@@ -142,31 +142,45 @@ def main():
     file_original = args.file_one
     file_tree1    = args.file_two
     file_tree2    = args.file_three
-
-    original = create_matrix(file_original)
-    tree1    = create_matrix(file_tree1)
-    tree2    = create_matrix(file_tree2)
-
-    print_matrix(original)
-    print(avarage_distances(original))
-    print("\n")
-    print_matrix(tree1)
-    print(avarage_distances(tree1))
-    print("\n")
-    print_matrix(tree2)
-    print(avarage_distances(tree2))
-
-    print("")
-    print(ccc(original, tree1))
-
-    print("")
-    print(ccc(original, tree2))
-
     
+    original_name = args.file_one[:args.file_one.rfind(".dist")]
+    tree1_name = args.file_two[:args.file_two.rfind(".dist")]
+    tree2_name = args.file_three[:args.file_three.rfind(".dist")]
+
+    original_matrix = create_matrix(file_original)
+    tree1_matrix    = create_matrix(file_tree1)
+    tree2_matrix    = create_matrix(file_tree2)
+
+
+    original = [original_name, original_matrix]
+    tree1 = [tree1_name, tree1_matrix]
+    tree2 = [tree2_name, tree2_matrix]
+
+    print("")
+
+    # output for ccc with original <-> tree1
+    string_tree1 = "Cophenetic correlation coefficient of matrix "
+    string_tree1 += tree1[0]
+    string_tree1 += " with respect to the original matrix "
+    string_tree1 += original[0]
+    print(string_tree1)
+    print(ccc(original[1], tree1[1]))
+
+    print("")
+
+    # output for ccc with original <-> tree2
+    string_tree2 = "Cophenetic correlation coefficient of matrix "
+    string_tree2 += tree2[0]
+    string_tree2 += " with respect to the original matrix "
+    string_tree2 += original[0]
+    print(string_tree2)
+    print(ccc(original[1], tree2[1]))
+
+    print("")
     
 
 if __name__ == "__main__":
-    # try:
+    try:
         args = create_parser()
         
         # accesing the path of the files
@@ -175,5 +189,5 @@ if __name__ == "__main__":
         print(args.file_three)
 
         main()
-    # except:
-    #     print('Try:  python3 Sara_Kemmler_Robin_Bonkass_A5.py -f1 distances_original.dist -f2 distances_tree1.dist -f3 distances_tree2.dist')
+    except:
+        print('Try:  python3 Sara_Kemmler_Robin_Bonkass_A5.py -f1 distances_original.dist -f2 distances_tree1.dist -f3 distances_tree2.dist')
