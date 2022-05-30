@@ -47,6 +47,13 @@ def create_parser():
     return(p.parse_args())
 
 def create_matrix(file):
+    '''
+    creates a matrix from the given file
+    the sequence labels are removed
+    the numbers of the matrix in the given file have to be separated
+    by a tab or one or multiple spaces 
+    '''
+
     matrix = []
     file_length = 0
 
@@ -57,19 +64,35 @@ def create_matrix(file):
     with open(file) as file_content:
         line_count = 0
         for line in file_content:
+
+            # delete all linebreaks, tabs and spaces
+            # and seperate the numbers in one array
             line_array = line.split("\n")
-            # FIXME doesn't work when seperated by spaces instead of tabs
-            line_array = line_array[0].split("\t")[1:line_count+1]
+            line_array = line_array[0].split("\t")
+            line_array = " ".join(line_array).split(" ")
+
+            # remove all elements which are empty strings
+            line_array_short = []
+            for i in line_array:
+                if(not i == ""):
+                    line_array_short.append(i)
+            line_array = line_array_short[1:line_count+1]
+
+            # remove leading and trailing whitespaces
+            for i in range(len(line_array)):
+                line_array[i] = line_array[i].strip()
             line_array = [float(x) for x in line_array]
             line_array.append(0)
             matrix.append(line_array)
 
+            # fill the rest of the matrix with -1
             for i in range(file_length - line_count - 1):
                 matrix[line_count].append(-1)
 
             line_count += 1
 
         # complete other half of matrix
+        # (overwrite all fields with value -1)
         length = len(matrix)
         for i in range(length):
             for j in range(len(matrix[i])):
@@ -78,8 +101,6 @@ def create_matrix(file):
     return matrix
 
 # TODO ist das was mit D Strich und T Strich gemeint ist?
-# FIXME sollen hier nur die Zahlen mit einberechnet werden, die in dem file stehen?
-# Berechnet zur Zeit durchschnitt über alle Zahlen, auch die 0 in der Diagonalen
 def avarage_distances(matrix):
     '''
     returns the avarage value of all entries of the matrix
