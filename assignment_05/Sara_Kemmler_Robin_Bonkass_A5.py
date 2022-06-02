@@ -4,8 +4,6 @@ Robin Bonkaß
 Sara Kemmler
 '''
 
-# TODO delete: https://www.researchgate.net/publication/262747089_A_cophenetic_correlation_coefficient_for_Tocher's_method
-
 import argparse
 from math import sqrt
 
@@ -100,7 +98,7 @@ def create_matrix(file):
 
     return matrix
 
-# TODO ist das was mit D Strich und T Strich gemeint ist?
+
 def avarage_distances(matrix):
     '''
     returns the avarage value of all entries of the matrix
