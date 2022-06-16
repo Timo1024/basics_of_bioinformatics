@@ -166,7 +166,7 @@ def main():
 
         # simulate three times for each 2N = 4,6,10
         simulation_sizes = [4,6,10]
-        simulation_repeats = 300
+        simulation_repeats = 3
 
         # collect time to find MRCA for every iteration
         # initialize the array used for this
@@ -211,7 +211,7 @@ def main():
     except NameError as err:
         print(err)
     except:
-        print('run Robin_Bonkass_Sara_Kemmler_PopGenSimulator.py')
+        print('python Robin_Bonkass_Sara_Kemmler_PopGenSimulator.py')
 
 
 if __name__ == "__main__":
