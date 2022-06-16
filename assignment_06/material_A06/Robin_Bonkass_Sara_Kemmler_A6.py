@@ -4,6 +4,7 @@ import string
 import random
 import matplotlib.pyplot as plt
 import numpy as np
+import sys
 
 def create_parser():
     '''
@@ -19,8 +20,8 @@ def create_parser():
 
     p.add_argument('-consoleOutput', '--consoleOutput', action='store_true', 
                    help="makes output in command line showing the generations")
-    p.add_argument('-no-consoleOutput', '--no-consoleOutput', dest='consoleOutput', action='store_false', 
-                   help="hides output in command line")
+    p.add_argument('-fileOutput', '--fileOutput', dest='consoleOutput', action='store_false', 
+                   help="print output in file \"Robin_Bonkass_Sara_Kemmler_generations.txt\"")
     p.set_defaults(consoleOutput=False)
 
     p.add_argument('-sizes', '--sizes', type=int, nargs="*",
@@ -161,7 +162,7 @@ class PopGenSimulator:
 
         return string.ascii_lowercase[0:self.size]
 
-    def simulate(self, console_output):
+    def simulate(self):
 
         # generate initial population
         generation = 0
@@ -169,10 +170,9 @@ class PopGenSimulator:
         k = self.size
         current_generation = self.make_initial_generation()
         
-        if(console_output):
-            print(str(generation), end="")
-            print("\t", end="")
-            print(current_generation)
+        print(str(generation), end="")
+        print("\t", end="")
+        print(current_generation)
 
         # run the simulator, print out each generation 
         # until the MRCA of all existing individuals is reached
@@ -180,10 +180,9 @@ class PopGenSimulator:
             generation -= 1
             [current_generation, k, waiting_time_overlap] = self.simulate_previous_generation(current_generation, k, waiting_time_overlap)
 
-            if(console_output):
-                print(str(generation), end="")
-                print("\t", end="")
-                print(current_generation)
+            print(str(generation), end="")
+            print("\t", end="")
+            print(current_generation)
 
         return self.time
 
@@ -197,27 +196,35 @@ def main():
         simulation_repeats = args.repeats
         console_output = args.consoleOutput
 
+        if(not console_output):
+            path = './Robin_Bonkass_Sara_Kemmler_generations.txt'
+            sys.stdout = open(path, 'w')
+
         # collect time to find MRCA for every iteration
         # initialize the array used for this
         times = {}
         for size in simulation_sizes:
             times[str(size)] = []
 
+
         for size in simulation_sizes:
+
+            print("===========================")
+
             for i in range(simulation_repeats):
 
-                if(console_output):
-                    print(i+1, end="")
-                    print(". simulation for N2 = ", end="")
-                    print(size, end="")
-                    print(":")
-                    print("---------------------------")
+                print(i+1, end="")
+                print(". simulation for N2 = ", end="")
+                print(size, end="")
+                print(":")
+                print("---------------------------")
 
                 pop_gen_simulator = PopGenSimulator(size)
-                times[str(size)].append(pop_gen_simulator.simulate(console_output))
+                times[str(size)].append(pop_gen_simulator.simulate())
 
-                if(console_output):
-                    print("===========================")
+                print("===========================")
+
+            print("\n")
 
         # get the values for the y axis for the plot
         values = []
@@ -248,12 +255,12 @@ def main():
         plt.ylabel("time to find MRCA of all genes")
         plt.title("time for all initial individuals to find their MRCA\n depending on the population size")
         plt.legend()
-        plt.show()
+        plt.savefig('Robin_Bonkass_Sara_Kemmler_time_to_MRCA.pdf')
 
     except NameError as err:
         print(err)
     except:
-        print('python Robin_Bonkass_Sara_Kemmler_PopGenSimulator.py -consoleOutput -repeats 3  -sizes 4 6 10')
+        print('python Robin_Bonkass_Sara_Kemmler_A6.py -fileOutput -repeats 3  -sizes 4 6 10')
 
 
 if __name__ == "__main__":
