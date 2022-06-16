@@ -1,9 +1,32 @@
-from cmath import exp
+import argparse
 import math
 import string
-import sys
-import random  # needed in simulate_previous_generation
+import random
 import matplotlib.pyplot as plt
+import numpy as np
+
+def create_parser():
+    '''
+    Creates an argument parser to get arguments from command line.
+    '''
+
+    # Make parser object
+    p = argparse.ArgumentParser(description=__doc__,
+                                formatter_class=argparse.RawDescriptionHelpFormatter)
+
+    p.add_argument('-repeats', '--repeats', type=int,
+                   help="Amount of repeats of the simulation for each initial size")
+
+    p.add_argument('-consoleOutput', '--consoleOutput', action='store_true', 
+                   help="makes output in command line showing the generations")
+    p.add_argument('-no-consoleOutput', '--no-consoleOutput', dest='consoleOutput', action='store_false', 
+                   help="hides output in command line")
+    p.set_defaults(consoleOutput=False)
+
+    p.add_argument('-sizes', '--sizes', type=int, nargs="*",
+                   help="n numbers which represent the initial population sizes")
+
+    return(p.parse_args())
 
 def get_random_pair(current_generation_array):
     """
@@ -88,24 +111,25 @@ class PopGenSimulator:
         current_generation_array=[]
         current_generation_array[:0]=current_generation
 
-        waiting_time = 0
+        # waiting_time = 0
         waiting_time_return = 0
+        waiting_time = waiting_time_overlap
 
-        if(waiting_time_overlap > 0):
-            current_generation_array = get_random_pair(current_generation_array)
-            k -= 1
-            waiting_time = waiting_time_overlap
-
-        while(waiting_time<=1 and k >= 2):
-            random_uniform = random.uniform(0,1)
-            waiting_time += ((0-(math.comb(k,2) ** (-1))) * math.log(random_uniform)) * self.size
-            self.time += ((0-(math.comb(k,2) ** (-1))) * math.log(random_uniform)) * self.size
-            if(waiting_time <= 1):
+        if(waiting_time_overlap <= 1):
+            if(waiting_time_overlap > 0):
                 current_generation_array = get_random_pair(current_generation_array)
                 k -= 1
+            
+            while(waiting_time<=1 and k >= 2):
+                random_uniform = random.uniform(0,1)
+                waiting_time += ((0-(math.comb(k,2) ** (-1))) * math.log(random_uniform)) * self.size
+                self.time += ((0-(math.comb(k,2) ** (-1))) * math.log(random_uniform)) * self.size
+                if(waiting_time <= 1):
+                    current_generation_array = get_random_pair(current_generation_array)
+                    k -= 1
 
         previous_generation = "".join(current_generation_array)
-
+        
         if(waiting_time > 1):
             waiting_time_return = waiting_time - 1
 
@@ -137,7 +161,7 @@ class PopGenSimulator:
 
         return string.ascii_lowercase[0:self.size]
 
-    def simulate(self):
+    def simulate(self, console_output):
 
         # generate initial population
         generation = 0
@@ -145,9 +169,10 @@ class PopGenSimulator:
         k = self.size
         current_generation = self.make_initial_generation()
         
-        print(str(generation), end="")
-        print("\t", end="")
-        print(current_generation)
+        if(console_output):
+            print(str(generation), end="")
+            print("\t", end="")
+            print(current_generation)
 
         # run the simulator, print out each generation 
         # until the MRCA of all existing individuals is reached
@@ -155,18 +180,22 @@ class PopGenSimulator:
             generation -= 1
             [current_generation, k, waiting_time_overlap] = self.simulate_previous_generation(current_generation, k, waiting_time_overlap)
 
-            print(str(generation), end="")
-            print("\t", end="")
-            print(current_generation)
+            if(console_output):
+                print(str(generation), end="")
+                print("\t", end="")
+                print(current_generation)
 
         return self.time
 
 def main():
     try:
 
-        # simulate three times for each 2N = 4,6,10
-        simulation_sizes = [4,6,10]
-        simulation_repeats = 3
+        args = create_parser()
+
+        # simulate "repeats" times for each 2N = "sizes"
+        simulation_sizes = args.sizes
+        simulation_repeats = args.repeats
+        console_output = args.consoleOutput
 
         # collect time to find MRCA for every iteration
         # initialize the array used for this
@@ -177,16 +206,18 @@ def main():
         for size in simulation_sizes:
             for i in range(simulation_repeats):
 
-                print(i+1, end="")
-                print(". simulation for N2 = ", end="")
-                print(size, end="")
-                print(":")
-                print("---------------------------")
+                if(console_output):
+                    print(i+1, end="")
+                    print(". simulation for N2 = ", end="")
+                    print(size, end="")
+                    print(":")
+                    print("---------------------------")
 
                 pop_gen_simulator = PopGenSimulator(size)
-                times[str(size)].append(pop_gen_simulator.simulate())
+                times[str(size)].append(pop_gen_simulator.simulate(console_output))
 
-                print("===========================")
+                if(console_output):
+                    print("===========================")
 
         # get the values for the y axis for the plot
         values = []
@@ -196,22 +227,33 @@ def main():
                 sum += i
             avarage = sum/simulation_repeats
             values.append(avarage)
+
+        # get the theory values
+        values_theory = []
+        for size in times:
+            values_theory.append(2 * (1 - (1 / int(size))) * int(size))
         
         # get the names for the x-Axis for the plot
         names = []
         for size in times:
-            name = "2N = "
-            name += str(size)
+            name = str(size)
             names.append(name)
+        x_axis = np.arange(len(names))
 
-        plt.bar(names, values)
+        plt.bar(x_axis - 0.1, values,        0.2, label="avarage values")
+        plt.bar(x_axis + 0.1, values_theory, 0.2, label="theory values")
+
+        plt.xticks(x_axis, names)
+        plt.xlabel("Amount of Genes 2N")
+        plt.ylabel("time to find MRCA of all genes")
         plt.title("time for all initial individuals to find their MRCA\n depending on the population size")
+        plt.legend()
         plt.show()
 
     except NameError as err:
         print(err)
     except:
-        print('python Robin_Bonkass_Sara_Kemmler_PopGenSimulator.py')
+        print('python Robin_Bonkass_Sara_Kemmler_PopGenSimulator.py -consoleOutput -repeats 3  -sizes 4 6 10')
 
 
 if __name__ == "__main__":
