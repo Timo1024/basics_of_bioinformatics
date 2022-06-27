@@ -122,9 +122,6 @@ def compute_probability(transition_matrix_file, contig_file):
             else:
                 probability *= matrix[transitions[sequence[i+0:i+2]][0]][transitions[sequence[i+0:i+2]][1]]
 
-# TODO delete
-    print(probability)
-
     return probability
 
 
@@ -185,62 +182,4 @@ def compute_log_odds(transition_matrix_file_plus, transition_matrix_file_minus, 
             if(matrix_plus[cords[0]][cords[1]]/matrix_minus[cords[0]][cords[1]] != 0):
                 log_odds += math.log(matrix_plus[cords[0]][cords[1]]/matrix_minus[cords[0]][cords[1]])
 
-# TODO delete
-    print(log_odds)
-
     return log_odds
-
-
-
-
-
-# TODO delete or copy following to main .py file when finished
-
-import argparse
-
-def create_parser():
-    '''
-    Creates a argument parser to facilitate file reading.
-    '''
-
-    # Make parser object
-    p = argparse.ArgumentParser(description=__doc__,
-                                formatter_class=argparse.RawDescriptionHelpFormatter)
-
-    p.add_argument('-f1', '--file-one',
-                   help="cds file with sequence")
-
-    p.add_argument('-f2', '--file-two',
-                   help="not cds file with sequence")
-
-    p.add_argument('-f3', '--file-three',
-                   help="contig file with sequence")
-
-    return(p.parse_args())
-
-def main():
-
-    file1 = args.file_one
-    file2 = args.file_two
-    file3 = args.file_three
-
-    print("p(x|p+)")
-    compute_probability(file1, file3)
-    print("p(x|p-)")
-    compute_probability(file2, file3)
-    print("log-odds")
-    compute_log_odds(file1, file2, file3)
-
-if __name__ == "__main__":
-    # try:
-        args = create_parser()
-        
-        # accessing the path of the files
-        print(args.file_one)
-        print(args.file_two)
-        print(args.file_three)
-
-        main()
-    # except:
-    #     print('Try:  python3 test_sequence.py -f1 tm1.txt -f2 tm2.txt -f3 ./material/contig.fasta')
-
