@@ -54,6 +54,9 @@ def init_transition_matrix():
 
 
 def print_to_file(matrix, file_name):
+    '''
+    prints the matrix to the file file_name.txt
+    '''
 
     # makes file with the distance matrix
     f = open(file_name + '.txt', "w")
