@@ -10,8 +10,6 @@ computes a transition matrix and
 saves it as <filename>.txt
 '''
 
-from gettext import translation
-
 
 def extract_headings_sequences(file):
     '''
@@ -183,7 +181,7 @@ def main():
 
     file1 = args.file_one
 
-    compute_transition_matrix(file1, "hi")
+    compute_transition_matrix(file1, "tm2")
 
     # print(extract_headings_sequences(file1)[1])
 
