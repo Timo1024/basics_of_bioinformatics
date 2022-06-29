@@ -51,7 +51,7 @@ def get_matrix_from_file(transition_matrix_file):
 
     with open(transition_matrix_file) as file_content:
         for line in file_content:
-            if(line[0:6] == "0.0000"):
+            if(line[0:2] == "0."):
 
                 new_line = line.split(" ")
                 if(new_line[-1:][0] == "\n"):
@@ -130,56 +130,4 @@ def compute_log_odds(transition_matrix_file_plus, transition_matrix_file_minus, 
     computes the log odds for a contig
     '''
 
-    sequence = "b" + extract_headings_sequences(contig_file)[1][0] + "e"
-
-    matrix_plus = get_matrix_from_file(transition_matrix_file_plus)
-    matrix_minus = get_matrix_from_file(transition_matrix_file_minus)
-
-    transitions = {
-        'bb' : [4,4],
-        'bA' : [4,0],
-        'bG' : [4,2],
-        'bC' : [4,1],
-        'bT' : [4,3],
-        'be' : [4,5],
-        'Ab' : [4,4],
-        'AA' : [0,0],
-        'AG' : [0,2],
-        'AC' : [0,1],
-        'AT' : [0,3],
-        'Ae' : [0,5],
-        'Gb' : [4,4],
-        'GA' : [2,0],
-        'GG' : [2,2],
-        'GC' : [2,1],
-        'GT' : [2,3],
-        'Ge' : [2,5],
-        'Cb' : [4,4],
-        'CA' : [1,0],
-        'CG' : [1,2],
-        'CC' : [1,1],
-        'CT' : [1,3],
-        'Ce' : [1,5],
-        'Tb' : [4,4],
-        'TA' : [3,0],
-        'TG' : [3,2],
-        'TC' : [3,1],
-        'TT' : [3,3],
-        'Te' : [3,5],
-        'eb' : [4,4],
-        'eA' : [5,0],
-        'eG' : [5,2],
-        'eC' : [5,1],
-        'eT' : [5,3],
-        'ee' : [5,5],
-    }
-
-    log_odds = 0
-
-    for i in range(len(sequence)-1):
-        cords = transitions[sequence[i:i+2]]
-        if(matrix_minus[cords[0]][cords[1]] != 0):
-            if(matrix_plus[cords[0]][cords[1]]/matrix_minus[cords[0]][cords[1]] != 0):
-                log_odds += math.log(matrix_plus[cords[0]][cords[1]]/matrix_minus[cords[0]][cords[1]])
-
-    return log_odds
+    return math.log(compute_probability(transition_matrix_file_plus, contig_file)/compute_probability(transition_matrix_file_minus, contig_file))

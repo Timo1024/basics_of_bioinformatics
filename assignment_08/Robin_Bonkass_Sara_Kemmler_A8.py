@@ -53,10 +53,13 @@ def main():
 
     print("p(contig|cds) = ", end="")
     print(compute_probability(name_cds + ".txt", contig))
+    # print(compute_probability("test_plus" + ".txt", contig))
     print("p(contig|notcds) = ", end="")
     print(compute_probability(name_not_cds + ".txt", contig))
+    # print(compute_probability("test_minus" + ".txt", contig))
     print("log-odds = ", end="")
     print(compute_log_odds(name_cds + ".txt", name_not_cds + ".txt", contig))
+    # print(compute_log_odds("test_plus" + ".txt", "test_minus" + ".txt", contig))
 
 
 if __name__ == "__main__":
@@ -65,5 +68,5 @@ if __name__ == "__main__":
 
         main()
     except:
-        print('Try:  python3 Robin_Bonkass_Sara_Kemmler_A8.py -cds ./material/cds_set.fasta -notcds ./material/notcds_set.fasta -contig ./material/contig.fasta -namecds cds_matrix -namenotcds notcds_matrix')
+        print('Try:  python3 Robin_Bonkass_Sara_Kemmler_A8.py -cds ./material/cds_set_new.fasta -notcds ./material/notcds_set_new.fasta -contig ./material/contig.fasta -namecds cds_matrix -namenotcds notcds_matrix')
 
