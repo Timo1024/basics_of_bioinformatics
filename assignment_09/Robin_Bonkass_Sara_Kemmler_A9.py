@@ -1,4 +1,4 @@
-from ctypes import Array
+from math import exp, log
 from operator import indexOf
 import numpy as np
 import argparse
@@ -106,43 +106,34 @@ class HMMhandler():
 
         # number of states
         self.state_number = int(lines[1])
-        # print("Number of states: \t" + str(self.state_number))
 
         # Name of states
         self.state_names = clean_array(lines[3].split(" "))
-        # print("Names of states: \t" + str(self.state_names))
 
         # Number of Symbols
         self.symbols_number = int(lines[5])
-        # print("Number of symbols: \t" + str(self.symbols_number))
 
         # Name of symbols
         self.symbol_names = clean_array(lines[7].split(" "))
-        # print("Names of symbols: \t" + str(self.symbol_names))
 
         # Transition probabilities matrix
         list_matrix_transition = []
-        # for i in range(9, 18):
-        for i in range(9, 12):
+        for i in range(9, 9+self.state_number):
             list_matrix_transition.append(list(map(float, clean_array(lines[i].split(" ")))))
         self.transm_matrix = np.matrix(list_matrix_transition)
-        # print("Transition Matrix:")
-        # print(self.transm_matrix)
 
         # Emission probabilities matrix
         list_matrix_emission = []
-        # for i in range(19, 28):
-        for i in range(13, 16):
+        for i in range(10+self.state_number, 10+(self.state_number*2)):
             list_matrix_emission.append(list(map(float, clean_array(lines[i].split(" ")))))
         self.emission_matrix = np.matrix(list_matrix_emission)
-        # print("Emission Matrix:")
-        # print(self.emission_matrix)
             
 
 
     def get_transition_probability(self, start_state, to_state):
         """
-        Optional function: Given states from the current HMM, returns the transition probability.
+        Given states from the current HMM, returns the transition probability.
+        Important that the state e (0) is located in the first column of the transition matrix
 
         Args:
             start_state (str): starting state
@@ -151,11 +142,11 @@ class HMMhandler():
         Returns:
             float: probability of going from start_state to to_state
         """
-        pass
+        return self.transm_matrix[indexOf(self.state_names, start_state), indexOf(self.state_names, to_state)]
 
     def get_emission_probability(self, state, symbol):
         """
-        Optional function: Given a state and a symbol from the current HMM, returns the emission probability of the symbol under the state.
+        Given a state and a symbol from the current HMM, returns the emission probability of the symbol under the state.
 
         Args:
             state (str): current state
@@ -164,7 +155,7 @@ class HMMhandler():
         Returns:
             float: probability of emitting symbol under state
         """
-        pass
+        return self.emission_matrix[indexOf(self.state_names, state), indexOf(self.symbol_names, symbol)]
 
     def runViterbi(self, sequence):
         """ For the given sequence of symbols, return the decoded sequence of symbols using the Viterbi algorithm.
@@ -178,10 +169,6 @@ class HMMhandler():
 
         length = len(sequence)
 
-        decoded_states = ""
-        # TODO: implement the following functions.
-        # You may need to adapt the input parameters for each function.
-
         # viterbi_init: initialization of the Viterbi algorithm
         dp_matrix = self.viterbi_init(length)
 
@@ -189,16 +176,26 @@ class HMMhandler():
         dp_matrix = self.viterbi_matrix_filling(dp_matrix, sequence)
 
         # viterbi_terminate: computes the final step of the recursion.
+        dp_matrix = self.viterbi_terminate(dp_matrix, sequence)
+
         # viterbi_traceback: returns the decoded sequence of states for the given sequence of symbols
+        decoded_states = self.viterbi_get_path(dp_matrix, sequence)
 
         return decoded_states
 
     def viterbi_init(self, length):
+        """
+        initializes the dp matrix and the first column
+        all elements of the matrix are a list containing two elements
+        - the first is the value
+        - the second is the row of the last column where the value came from
+          (for traceback)
+        """
 
-        dp_matrix = np.empty((self.state_number, length+2))
-        dp_matrix[0, 0] = 1
+        dp_matrix = np.empty((self.state_number, length+2), dtype=object)
+        dp_matrix[0, 0] = [1, 0]
         for i in range(1, self.state_number):
-            dp_matrix[i, 0] = 0
+            dp_matrix[i, 0] = [0, 0]
 
         return dp_matrix
 
@@ -206,33 +203,52 @@ class HMMhandler():
 
         # e_l(x_i) * max_k(v_k(i-1) * p_kl)
 
-        # xi are the letters in the sequence
-        # l are the states
+        index_in_sequence = 0
+        for xi in sequence: # i is the current symbol name
+            for l in self.state_names: # l is the current state name
 
-        for i in range(len(sequence)): # i is index in the max part of the expression
-            for l in range(self.state_number): # l is the index of the state
-
-                # calculate the e_l(x_i)
-                elxi = self.emission_matrix[l, indexOf(self.symbol_names, sequence[i])]
+                # get emission probability of the symbol under the state
+                elxi = self.get_emission_probability(l, xi)
                 
+                # get all values of the last column of the dp matrix times the transition probability
                 max_k_array = []
                 for k in range(self.state_number):
-                    print(l)
-                    max_k_array.append(dp_matrix[k, i] * self.transm_matrix[k, l-1])
-                # print(max(max_k_array))
-                dp_matrix[l, i+1] = elxi * max(max_k_array)
+                    # max_k_array.append(dp_matrix[k, index_in_sequence][0] * self.get_transition_probability(self.state_names[k], l))
+                    max_k_array.append(exp(log_data(dp_matrix[k, index_in_sequence][0]) + log_data(self.get_transition_probability(self.state_names[k], l))))
+                # dp_matrix[indexOf(self.state_names, l), index_in_sequence+1] = [elxi * max(max_k_array), np.argmax(max_k_array)]
+                dp_matrix[indexOf(self.state_names, l), index_in_sequence+1] = [exp(log_data(elxi) + log_data(max(max_k_array))), np.argmax(max_k_array)]
 
-                # print(str(elxi) + " * max(" + str(max_k_array) + ")")
+            index_in_sequence += 1
 
-                # print(dp_matrix)
+        return dp_matrix
 
-                pass
+    def viterbi_terminate(self, dp_matrix, sequence):
 
-    def viterbi_terminate(self):
-        pass
+        max_k_array = []
+        for k in range(self.state_number):
+            # max_k_array.append(dp_matrix[k, len(sequence)][0] * self.get_transition_probability(self.state_names[k], self.state_names[0]))
+            max_k_array.append(exp(log_data(dp_matrix[k, len(sequence)][0]) + log_data(self.get_transition_probability(self.state_names[k], self.state_names[0]))))
+        dp_matrix[0, len(sequence)+1] = [max(max_k_array), np.argmax(max_k_array)]
+        
+        for i in range(1, self.state_number):
+            dp_matrix[i, len(sequence)+1] = [0, 0]
 
-    def viterbi_get_path(self):
-        pass
+        print(dp_matrix)
+
+        return dp_matrix
+        
+
+    def viterbi_get_path(self, dp_matrix, sequence):
+        
+        traceback = 0
+        decoded = ""
+        for i in reversed(range(len(sequence)+2)):
+            decoded += self.state_names[traceback]
+            traceback = dp_matrix[traceback, i][1]
+
+        return decoded[::-1]
+        
+
 
 
 def prettyPrinting(input, decoded):
@@ -249,15 +265,15 @@ def main():
     hmm_object = HMMhandler()
     hmm_object.read_hmm(args.hmm_model)
 
-    # TODO Parse fasta file for sequences
+    # Parse fasta file for sequences
     original = extract_headings_sequences(args.sequences)[1]
 
-    # TODO For each sequence in the fasta file run the viterbi algorithm.
+    # For each sequence in the fasta file run the viterbi algorithm.
     decoded = []
     for sequence in original:
         decoded.append(hmm_object.runViterbi(sequence))
     print(decoded)
-    
+
     # TODO Once decoded, print the original and the decoded sequences with the desired output format.
 
 
