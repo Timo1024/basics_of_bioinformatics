@@ -1,6 +1,9 @@
 from ctypes import Array
+from operator import indexOf
 import numpy as np
 import argparse
+
+# TODO überall Kommentare schreiben
 
 
 np.seterr(divide='ignore')
@@ -119,7 +122,8 @@ class HMMhandler():
 
         # Transition probabilities matrix
         list_matrix_transition = []
-        for i in range(9, 18):
+        # for i in range(9, 18):
+        for i in range(9, 12):
             list_matrix_transition.append(list(map(float, clean_array(lines[i].split(" ")))))
         self.transm_matrix = np.matrix(list_matrix_transition)
         # print("Transition Matrix:")
@@ -127,8 +131,9 @@ class HMMhandler():
 
         # Emission probabilities matrix
         list_matrix_emission = []
-        for i in range(19, 28):
-            list_matrix_emission.append(list(map(int, clean_array(lines[i].split(" ")))))
+        # for i in range(19, 28):
+        for i in range(13, 16):
+            list_matrix_emission.append(list(map(float, clean_array(lines[i].split(" ")))))
         self.emission_matrix = np.matrix(list_matrix_emission)
         # print("Emission Matrix:")
         # print(self.emission_matrix)
@@ -137,7 +142,7 @@ class HMMhandler():
 
     def get_transition_probability(self, start_state, to_state):
         """
-        Optinal function: Given states from the current HMM, returns the transition probability.
+        Optional function: Given states from the current HMM, returns the transition probability.
 
         Args:
             start_state (str): starting state
@@ -177,7 +182,7 @@ class HMMhandler():
         # TODO: implement the following functions.
         # You may need to adapt the input parameters for each function.
 
-        # viterbi_init: initializaion of the Viterbi algorithm
+        # viterbi_init: initialization of the Viterbi algorithm
         dp_matrix = self.viterbi_init(length)
 
         # viterbi_matrix_filling: fills up the matrices
@@ -198,7 +203,30 @@ class HMMhandler():
         return dp_matrix
 
     def viterbi_matrix_filling(self, dp_matrix, sequence):
-        pass
+
+        # e_l(x_i) * max_k(v_k(i-1) * p_kl)
+
+        # xi are the letters in the sequence
+        # l are the states
+
+        for i in range(len(sequence)): # i is index in the max part of the expression
+            for l in range(self.state_number): # l is the index of the state
+
+                # calculate the e_l(x_i)
+                elxi = self.emission_matrix[l, indexOf(self.symbol_names, sequence[i])]
+                
+                max_k_array = []
+                for k in range(self.state_number):
+                    print(l)
+                    max_k_array.append(dp_matrix[k, i] * self.transm_matrix[k, l-1])
+                # print(max(max_k_array))
+                dp_matrix[l, i+1] = elxi * max(max_k_array)
+
+                # print(str(elxi) + " * max(" + str(max_k_array) + ")")
+
+                # print(dp_matrix)
+
+                pass
 
     def viterbi_terminate(self):
         pass

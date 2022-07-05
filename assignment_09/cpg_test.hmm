@@ -1,0 +1,17 @@
+# Number of states:
+3
+# Names of states:
+0 P N
+# Number of symbols:
+2
+# Names of symbols:
+R Y
+# Transition probabilities:
+0.7 0.3 0
+0.2 0.7 0.1
+0.7 0.2 0.1
+# Emission probabilities:
+0 0
+0.4 0.6
+0.3 0.7
+# EOF
