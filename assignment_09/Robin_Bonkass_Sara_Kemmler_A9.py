@@ -2,6 +2,7 @@ from math import exp, log
 from operator import indexOf
 import numpy as np
 import argparse
+import decimal
 
 # TODO überall Kommentare schreiben
 
@@ -63,7 +64,8 @@ def log_data(n):
     Returns:
         float or minus inf: log of n or minus infinity if 0 is given
     """
-    return -np.inf if n == 0 else np.log(n)
+    # return -np.inf if n == 0 else np.log(n)
+    return decimal.Decimal('-Infinity') if n == 0 else decimal.Decimal(n).ln()
 
 def clean_array(array):
     """
@@ -214,9 +216,26 @@ class HMMhandler():
                 max_k_array = []
                 for k in range(self.state_number):
                     # max_k_array.append(dp_matrix[k, index_in_sequence][0] * self.get_transition_probability(self.state_names[k], l))
-                    max_k_array.append(exp(log_data(dp_matrix[k, index_in_sequence][0]) + log_data(self.get_transition_probability(self.state_names[k], l))))
+                    # max_k_array.append(exp(log_data(dp_matrix[k, index_in_sequence][0]) + log_data(self.get_transition_probability(self.state_names[k], l))))
+                    max_k_array.append(decimal.Decimal(log_data(dp_matrix[k, index_in_sequence][0]) + log_data(self.get_transition_probability(self.state_names[k], l))).exp())
                 # dp_matrix[indexOf(self.state_names, l), index_in_sequence+1] = [elxi * max(max_k_array), np.argmax(max_k_array)]
-                dp_matrix[indexOf(self.state_names, l), index_in_sequence+1] = [exp(log_data(elxi) + log_data(max(max_k_array))), np.argmax(max_k_array)]
+                arg_max = np.argmax(max_k_array)
+                # arg_max = np.argmax(max_k_array) if np.argmax(max_k_array) != 0 else 1
+                # dp_matrix[indexOf(self.state_names, l), index_in_sequence+1] = [exp(log_data(elxi) + log_data(max(max_k_array))), arg_max]
+                # dp_matrix[indexOf(self.state_names, l), index_in_sequence+1] = [exp(log_data(elxi) + log_data(max(max_k_array))), arg_max]
+                dp_matrix[indexOf(self.state_names, l), index_in_sequence+1] = [decimal.Decimal(log_data(elxi) + log_data(max(max_k_array))).exp(), arg_max]
+
+                # if(max(max_k_array) == 0 and l != "0"):
+                #     print("Error: max is 0 can't choose maximum")
+                #     print("Argmax is: " + str(np.argmax(max_k_array)))
+                #     print(max_k_array)
+                #     for k in range(self.state_number):
+                #         print("log(dp_matrix[k, index_in_sequence][0]) = " + str(log_data(dp_matrix[k, index_in_sequence][0])))
+                #         print("log(self.get_transition_probability(self.state_names[k], l)) = " + str(log_data(self.get_transition_probability(self.state_names[k], l))))
+                #         print("exp(v + transitionp) = " + str(log_data(dp_matrix[k, index_in_sequence][0]) + log_data(self.get_transition_probability(self.state_names[k], l))))
+                #     print("current index in sequence: " + str(index_in_sequence))
+                #     print("---------------------------------------------------")
+                #     raise NameError('max is 0')
 
             index_in_sequence += 1
 
@@ -251,30 +270,65 @@ class HMMhandler():
 
 
 
-def prettyPrinting(input, decoded):
+def prettyPrinting(input, decoded, f):
     """ Formats the given sequences to match the desired output format.
 
     Args:
         input (str): the original input sequences
         decoded (str): the sequence with the decoded states
     """
-    pass
+    # make arrays of length 60 of every string
+    input_cut = []
+    input_cut.append(input[0:50])
+    for i in range(50, len(input), 60):
+        input_cut.append(input[i:i+60])
+    decoded_cut = []
+    decoded_cut.append(decoded[0:51])
+    for i in range(51, len(decoded), 60):
+        decoded_cut.append(decoded[i:i+60])
+
+    f.write("input:    ")
+    f.write(input_cut[0])
+    f.write("\n")
+    f.write("decoded: ")
+    f.write(decoded_cut[0])
+    f.write("\n\n")
+
+    for i in range(1, len(input_cut)):
+        f.write(input_cut[i])
+        f.write("\n")
+        f.write(decoded_cut[i])
+        f.write("\n\n")
 
 
 def main():
+
+    print(str(exp(-743.7469247408213 + -1.7883043669741367)))
+
     hmm_object = HMMhandler()
     hmm_object.read_hmm(args.hmm_model)
 
     # Parse fasta file for sequences
-    original = extract_headings_sequences(args.sequences)[1]
+    headings_sequences = extract_headings_sequences(args.sequences)
+    original = headings_sequences[1]
+    headings = headings_sequences[0]
 
     # For each sequence in the fasta file run the viterbi algorithm.
     decoded = []
     for sequence in original:
         decoded.append(hmm_object.runViterbi(sequence))
-    print(decoded)
-
+    
     # TODO Once decoded, print the original and the decoded sequences with the desired output format.
+    f = open("output.txt", "w")
+    f.write("Original and decoded sequences after applying the viterbi algorithm:\n\n\n")
+
+    for i in range(len(original)):
+        f.write(headings[i])
+        f.write("\n\n")
+        prettyPrinting(original[i], decoded[i], f)
+        f.write("\n")
+
+    f.close()
 
 
 if __name__ == "__main__":
