@@ -222,11 +222,14 @@ def main():
     hmm_object.read_hmm(args.hmm_model)
 
     # TODO Parse fasta file for sequences
-    sequences = extract_headings_sequences(args.sequences)[1]
+    original = extract_headings_sequences(args.sequences)[1]
 
     # TODO For each sequence in the fasta file run the viterbi algorithm.
-    # for sequence in sequences:
-    hmm_object.runViterbi(sequences[0])
+    decoded = []
+    for sequence in original:
+        decoded.append(hmm_object.runViterbi(sequence))
+    print(decoded)
+    
     # TODO Once decoded, print the original and the decoded sequences with the desired output format.
 
 
