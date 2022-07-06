@@ -1,5 +1,6 @@
 
 from math import exp
+from operator import indexOf
 import numpy as np
 import sys
 
@@ -172,27 +173,36 @@ class HMMhandler():
             return(3)
     
     def viterbi_matrix_filling(self):
-        
-        for base in range(1, 2):#self.sequence_length - 1
+
+        counter = 1
+
+        for base in self.sequence_as_list[1:-1]:
             for state_l in range(0, self.state_number):
-                emission_base = self.which_base(base)
+                emission_base = indexOf(self.symbol_names, base)
                 emission_probability = float(self.emission_matrix[state_l][emission_base])
                 maximum_finder = []
                 
                 for state_k in range(0, self.state_number):
-                    viterbi_k = float(self.virterbi_matrix[state_k][base-1])
-                    #print(viterbi_k)
+                    viterbi_k = float(self.virterbi_matrix[state_k][counter-1])
                     transmission = float(self.transm_matrix[state_k][state_l])
-                    print(str(viterbi_k) + " " + str(transmission))
                     maximum_finder.append(np.exp(log_data(viterbi_k) + log_data(transmission)))
                 
                 maximum = max(maximum_finder)
-                print("max array:")
-                print(maximum_finder)
-                self.virterbi_matrix[state_l][base] = emission_probability  * maximum 
-            
-        print(self.virterbi_matrix)        
-        pass
+                self.virterbi_matrix[state_l][counter] = emission_probability  * maximum 
+                
+            counter += 1
+
+        self.print_matrix(self.virterbi_matrix)
+
+    # FIXME only for debugging
+    def print_matrix(self, matrix):
+        for i in matrix:
+            for k in i:
+                if(len(str(np.round(k, 8))) > 3):
+                    print(str(np.round(k, 8)) + "\t", end="")
+                else:
+                    print(str(np.round(k, 8)) + "\t\t", end="")
+            print("")
 
     def viterbi_terminate(self):
         
