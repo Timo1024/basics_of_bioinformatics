@@ -246,7 +246,8 @@ class HMMhandler():
         max_k_array = []
         for k in range(self.state_number):
             # max_k_array.append(dp_matrix[k, len(sequence)][0] * self.get_transition_probability(self.state_names[k], self.state_names[0]))
-            max_k_array.append(exp(log_data(dp_matrix[k, len(sequence)][0]) + log_data(self.get_transition_probability(self.state_names[k], self.state_names[0]))))
+            # max_k_array.append(exp(log_data(dp_matrix[k, len(sequence)][0]) + log_data(self.get_transition_probability(self.state_names[k], self.state_names[0]))))
+            max_k_array.append(decimal.Decimal(log_data(dp_matrix[k, len(sequence)][0]) + log_data(self.get_transition_probability(self.state_names[k], self.state_names[0]))).exp())
         dp_matrix[0, len(sequence)+1] = [max(max_k_array), np.argmax(max_k_array)]
         
         for i in range(1, self.state_number):
@@ -287,10 +288,10 @@ def prettyPrinting(input, decoded, f):
     for i in range(51, len(decoded), 60):
         decoded_cut.append(decoded[i:i+60])
 
-    f.write("input:    ")
+    f.write("Symbols:  ")
     f.write(input_cut[0])
     f.write("\n")
-    f.write("decoded: ")
+    f.write("Viterbi: ")
     f.write(decoded_cut[0])
     f.write("\n\n")
 
