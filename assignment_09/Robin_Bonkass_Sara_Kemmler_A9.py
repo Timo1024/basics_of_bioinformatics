@@ -225,17 +225,17 @@ class HMMhandler():
                 # dp_matrix[indexOf(self.state_names, l), index_in_sequence+1] = [exp(log_data(elxi) + log_data(max(max_k_array))), arg_max]
                 dp_matrix[indexOf(self.state_names, l), index_in_sequence+1] = [decimal.Decimal(log_data(elxi) + log_data(max(max_k_array))).exp(), arg_max]
 
-                # if(max(max_k_array) == 0 and l != "0"):
-                #     print("Error: max is 0 can't choose maximum")
-                #     print("Argmax is: " + str(np.argmax(max_k_array)))
-                #     print(max_k_array)
-                #     for k in range(self.state_number):
-                #         print("log(dp_matrix[k, index_in_sequence][0]) = " + str(log_data(dp_matrix[k, index_in_sequence][0])))
-                #         print("log(self.get_transition_probability(self.state_names[k], l)) = " + str(log_data(self.get_transition_probability(self.state_names[k], l))))
-                #         print("exp(v + transitionp) = " + str(log_data(dp_matrix[k, index_in_sequence][0]) + log_data(self.get_transition_probability(self.state_names[k], l))))
-                #     print("current index in sequence: " + str(index_in_sequence))
-                #     print("---------------------------------------------------")
-                #     raise NameError('max is 0')
+                if(max(max_k_array) == 0 and l != "0"):
+                    print("Error: max is 0 can't choose maximum")
+                    print("Argmax is: " + str(np.argmax(max_k_array)))
+                    print(max_k_array)
+                    for k in range(self.state_number):
+                        print("log(dp_matrix[k, index_in_sequence][0]) = " + str(log_data(dp_matrix[k, index_in_sequence][0])))
+                        print("log(self.get_transition_probability(self.state_names[k], l)) = " + str(log_data(self.get_transition_probability(self.state_names[k], l))))
+                        print("exp(v + transitionp) = " + str(log_data(dp_matrix[k, index_in_sequence][0]) + log_data(self.get_transition_probability(self.state_names[k], l))))
+                    print("current index in sequence: " + str(index_in_sequence))
+                    print("---------------------------------------------------")
+                    raise NameError('max is 0')
 
             index_in_sequence += 1
 
@@ -252,7 +252,7 @@ class HMMhandler():
         for i in range(1, self.state_number):
             dp_matrix[i, len(sequence)+1] = [0, 0]
 
-        print(dp_matrix)
+        # print(dp_matrix)
 
         return dp_matrix
         
