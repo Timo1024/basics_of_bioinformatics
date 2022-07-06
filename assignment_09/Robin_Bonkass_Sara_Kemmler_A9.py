@@ -1,10 +1,7 @@
-from math import exp, log
 from operator import indexOf
 import numpy as np
 import argparse
 import decimal
-
-# TODO überall Kommentare schreiben
 
 
 np.seterr(divide='ignore')
@@ -64,13 +61,14 @@ def log_data(n):
     Returns:
         float or minus inf: log of n or minus infinity if 0 is given
     """
-    # return -np.inf if n == 0 else np.log(n)
+
     return decimal.Decimal('-Infinity') if n == 0 else decimal.Decimal(n).ln()
 
 def clean_array(array):
     """
     returns a list without the last element if it is empty or a linebreak
     """
+
     if(array[-1:][0] == '' or array[-1:][0] == '\n' or array[-1:][0] == ' '):
         return array[:-1]
     else:
@@ -84,10 +82,9 @@ class HMMhandler():
 
     def __init__(self, state_names=[], symbol_names=[], transm_matrix=np.matrix([], []), emission_matrix=np.matrix([], [])):
         """
-        Constructor for the HMM handler class. 
-        We recommend saving the parameters of the HMM model as properties of this clas. 
-        It is not a must.
+        Constructor for the HMM handler class
         """
+
         self.state_number = len(state_names)
         self.symbols_number = len(symbol_names)
         self.state_names = state_names
@@ -97,7 +94,7 @@ class HMMhandler():
 
     def read_hmm(self, hmm_file):
         """
-        Parses an HMM from the fixed format. See script P. 163.
+        Parses an HMM from the fixed format
         Relies on the file having the same order and structure from the shown structure.
         """
 
@@ -144,6 +141,7 @@ class HMMhandler():
         Returns:
             float: probability of going from start_state to to_state
         """
+
         return self.transm_matrix[indexOf(self.state_names, start_state), indexOf(self.state_names, to_state)]
 
     def get_emission_probability(self, state, symbol):
@@ -157,6 +155,7 @@ class HMMhandler():
         Returns:
             float: probability of emitting symbol under state
         """
+
         return self.emission_matrix[indexOf(self.state_names, state), indexOf(self.symbol_names, symbol)]
 
     def runViterbi(self, sequence):
@@ -202,8 +201,9 @@ class HMMhandler():
         return dp_matrix
 
     def viterbi_matrix_filling(self, dp_matrix, sequence):
-
-        # e_l(x_i) * max_k(v_k(i-1) * p_kl)
+        """
+        fills up the matrix
+        """
 
         index_in_sequence = 0
         for xi in sequence: # i is the current symbol name
@@ -215,26 +215,11 @@ class HMMhandler():
                 # get all values of the last column of the dp matrix times the transition probability
                 max_k_array = []
                 for k in range(self.state_number):
-                    # max_k_array.append(dp_matrix[k, index_in_sequence][0] * self.get_transition_probability(self.state_names[k], l))
-                    # max_k_array.append(exp(log_data(dp_matrix[k, index_in_sequence][0]) + log_data(self.get_transition_probability(self.state_names[k], l))))
                     max_k_array.append(decimal.Decimal(log_data(dp_matrix[k, index_in_sequence][0]) + log_data(self.get_transition_probability(self.state_names[k], l))).exp())
-                # dp_matrix[indexOf(self.state_names, l), index_in_sequence+1] = [elxi * max(max_k_array), np.argmax(max_k_array)]
                 arg_max = np.argmax(max_k_array)
-                # arg_max = np.argmax(max_k_array) if np.argmax(max_k_array) != 0 else 1
-                # dp_matrix[indexOf(self.state_names, l), index_in_sequence+1] = [exp(log_data(elxi) + log_data(max(max_k_array))), arg_max]
-                # dp_matrix[indexOf(self.state_names, l), index_in_sequence+1] = [exp(log_data(elxi) + log_data(max(max_k_array))), arg_max]
                 dp_matrix[indexOf(self.state_names, l), index_in_sequence+1] = [decimal.Decimal(log_data(elxi) + log_data(max(max_k_array))).exp(), arg_max]
 
                 if(max(max_k_array) == 0 and l != "0"):
-                    print("Error: max is 0 can't choose maximum")
-                    print("Argmax is: " + str(np.argmax(max_k_array)))
-                    print(max_k_array)
-                    for k in range(self.state_number):
-                        print("log(dp_matrix[k, index_in_sequence][0]) = " + str(log_data(dp_matrix[k, index_in_sequence][0])))
-                        print("log(self.get_transition_probability(self.state_names[k], l)) = " + str(log_data(self.get_transition_probability(self.state_names[k], l))))
-                        print("exp(v + transitionp) = " + str(log_data(dp_matrix[k, index_in_sequence][0]) + log_data(self.get_transition_probability(self.state_names[k], l))))
-                    print("current index in sequence: " + str(index_in_sequence))
-                    print("---------------------------------------------------")
                     raise NameError('max is 0')
 
             index_in_sequence += 1
@@ -242,23 +227,26 @@ class HMMhandler():
         return dp_matrix
 
     def viterbi_terminate(self, dp_matrix, sequence):
+        """
+        computes the final step of the recursion
+        """
 
         max_k_array = []
         for k in range(self.state_number):
-            # max_k_array.append(dp_matrix[k, len(sequence)][0] * self.get_transition_probability(self.state_names[k], self.state_names[0]))
-            # max_k_array.append(exp(log_data(dp_matrix[k, len(sequence)][0]) + log_data(self.get_transition_probability(self.state_names[k], self.state_names[0]))))
             max_k_array.append(decimal.Decimal(log_data(dp_matrix[k, len(sequence)][0]) + log_data(self.get_transition_probability(self.state_names[k], self.state_names[0]))).exp())
         dp_matrix[0, len(sequence)+1] = [max(max_k_array), np.argmax(max_k_array)]
         
         for i in range(1, self.state_number):
             dp_matrix[i, len(sequence)+1] = [0, 0]
 
-        # print(dp_matrix)
-
         return dp_matrix
         
 
     def viterbi_get_path(self, dp_matrix, sequence):
+        """
+        viterbi traceback
+        returns the decoded sequence of states for the given sequence of symbols
+        """
         
         traceback = 0
         decoded = ""
@@ -267,17 +255,17 @@ class HMMhandler():
             traceback = dp_matrix[traceback, i][1]
 
         return decoded[::-1]
-        
-
 
 
 def prettyPrinting(input, decoded, f):
-    """ Formats the given sequences to match the desired output format.
+    """ 
+    Formats the given sequences to match the desired output format.
 
     Args:
         input (str): the original input sequences
         decoded (str): the sequence with the decoded states
     """
+
     # make arrays of length 60 of every string
     input_cut = []
     input_cut.append(input[0:50])
@@ -303,8 +291,6 @@ def prettyPrinting(input, decoded, f):
 
 
 def main():
-
-    print(str(exp(-743.7469247408213 + -1.7883043669741367)))
 
     hmm_object = HMMhandler()
     hmm_object.read_hmm(args.hmm_model)
@@ -333,8 +319,8 @@ def main():
 
 
 if __name__ == "__main__":
-    # try:
+    try:
         args = create_parser()
         main()
-    # except:
-    #     print('Try:  python3 Robin_Bonkass_Sara_Kemmler_A9.py -seqs input_hmm.fasta -hmm cpg.hmm')
+    except:
+        print('Try:  python3 Robin_Bonkass_Sara_Kemmler_A9.py -seqs input_hmm.fasta -hmm cpg.hmm')
