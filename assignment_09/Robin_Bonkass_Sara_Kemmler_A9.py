@@ -319,7 +319,7 @@ def main():
     for sequence in original:
         decoded.append(hmm_object.runViterbi(sequence))
     
-    # TODO Once decoded, print the original and the decoded sequences with the desired output format.
+    # Once decoded, print the original and the decoded sequences with the desired output format.
     f = open("output.txt", "w")
     f.write("Original and decoded sequences after applying the viterbi algorithm:\n\n\n")
 
