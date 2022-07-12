@@ -8,6 +8,8 @@
 
 import sys
 
+from numpy import rec
+
 
 class gffParser:
     """ GFF Parser Class.
@@ -31,35 +33,39 @@ class gffParser:
     def __init__(self, input_file):
         self.data = {}
         self.dict = {}
-        for line in input_file:
-            record = line.strip().split("\t")
-            sequence_name = record[0]
-            source = record[1]
-            feature = record[2]
-            start = int(record[3])
-            end = int(record[4])
-            if (record[5] != '.'):
-                score = record[5]
-            else:
-                score = None
-            if (record[6] == '+'):
-                strand = 1
-            else:
-                strand = -1
-            if (record[7] != '.'):
-                frame = record[7]
-            else:
-                frame = None
-            attributes = record[8].split(';')
-            attributes = {x.split('=')[0]: x.split('=')[1]
-                          for x in attributes if '=' in x}
-            if not(sequence_name in self.data):
-                self.data[sequence_name] = []
-            alpha = {'source': source, 'feature': feature, 'start': start,
-                     'end': end, 'score': score, 'strand': strand, 'frame': frame}
-            for k, v in attributes.iteritems():
-                alpha[k] = v
-            self.data[sequence_name].append(alpha)
+        with open(input_file) as file_content:
+            for line in file_content:
+                if(not line.startswith("#") and len(line.strip().split("\t")) != 1):
+                    # print("line: " + line)
+                    record = line.strip().split("\t")
+                    # print(record)
+                    sequence_name = record[0]
+                    source = record[1]
+                    feature = record[2]
+                    start = int(record[3])
+                    end = int(record[4])
+                    if (record[5] != '.'):
+                        score = record[5]
+                    else:
+                        score = None
+                    if (record[6] == '+'):
+                        strand = 1
+                    else:
+                        strand = -1
+                    if (record[7] != '.'):
+                        frame = record[7]
+                    else:
+                        frame = None
+                    attributes = record[8].split(';')
+                    attributes = {x.split('=')[0]: x.split('=')[1]
+                                for x in attributes if '=' in x}
+                    if not(sequence_name in self.data):
+                        self.data[sequence_name] = []
+                    alpha = {'source': source, 'feature': feature, 'start': start,
+                            'end': end, 'score': score, 'strand': strand, 'frame': frame}
+                    for k, v in attributes.items():
+                        alpha[k] = v
+                    self.data[sequence_name].append(alpha)
 
     def geneDict(self):
         """ Creates a dictionary of all the genes in the file.
@@ -92,6 +98,7 @@ class gffParser:
             A list of dictionaries where each dictionary corresponds to a gene in the sequence.
         """
         genes_list = []
+        print(self.data.keys())
         chromosome = self.data[Id]
         for x in chromosome:
             if (x['feature'] == 'gene'):
@@ -134,7 +141,9 @@ class gffParser:
             """
         cds_list = []
         for x in self.data[seq_name]:
-            if (x['feature'] == 'CDS') and (x['Parent'] == Id):
+            # print(x['Parent'])
+            if (x['feature'] == 'CDS'):
+            # if (x['feature'] == 'CDS') and (x['Parent'] == Id):
                 cds_info = x
                 cds_list.append(cds_info)
         return cds_list
