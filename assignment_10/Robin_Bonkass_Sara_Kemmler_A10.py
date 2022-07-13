@@ -13,34 +13,67 @@ def main():
     # print(out.getGenes("NC_002516.2"))
 
     # get all starts and ends
-    # start_end1 = []
-    numbers1 = []
-    for i in out1.getCDS("NC_002516.2", "gene-PA0001"):
+    cds1 = out1.getCDS("NC_002516.2", "gene-PA0001")
+    cds2 = out2.getCDS("NC_002516.2", "gene-PA0001")
+
+    # gets the max length of sequence
+    last_cds1_end = cds1[len(cds1)-1]['end']
+    last_cds2_end = cds2[len(cds2)-1]['end']
+    last_cds_end_all = max(last_cds1_end, last_cds2_end)
+    
+    # gets the ranges for cds in ground truth
+    ground_truth = []
+    for i in cds1:
         # start_end1.append([i['start'], i['end']])
-        # numbers1 += list(range(i['start'], i['end']+1))
-        numbers1 = chain(numbers1, range(i['start'], i['end']+1))
+        ground_truth += list(range(i['start'], i['end']+1))
+        # ground_truth = chain(ground_truth, range(i['start'], i['end']+1))
 
-    # start_end2 = []
-    numbers2 = []
-    for i in out2.getCDS("NC_002516.2", "gene-PA0001"):
+    # gets the ranges for cds in prediction
+    prediction = []
+    for i in cds2:
         # start_end2.append([i['start'], i['end']])
-        # numbers2 += list(range(i['start'], i['end']+1))
-        numbers2 = chain(numbers2, range(i['start'], i['end']+1))
+        prediction += list(range(i['start'], i['end']+1))
+        # prediction = chain(prediction, range(i['start'], i['end']+1))
 
-    # print(numbers1)
+    
+    ground_truth_bool = [False] * (last_cds_end_all+1)
+    prediction_bool = [False] * (last_cds_end_all+1)
 
-    # z = [i for i in numbers1 if i in numbers2]
-    # print(z)
+    for i in ground_truth:
+        ground_truth_bool[i] = True
+    for i in prediction:
+        prediction_bool[i] = True
 
-    set_numbers1 = set(numbers1)
-    print(set_numbers1.intersection(numbers2))
+    tp = 0
+    tn = 0
+    fp = 0
+    fn = 0
 
+    for i in range(last_cds_end_all+1):
+        if(ground_truth_bool[i] and prediction_bool[i]):
+            tp += 1
+        elif ground_truth_bool[i]:
+            fn += 1
+        elif prediction_bool[i]:
+            fp += 1
+        else:
+            tn += 1
 
-    # numbers1 = range(5,10)
-    # numbers1 = chain(numbers1, range(10,15))
-    # numbers2 = chain(range(1,7), range(12,15))
-    # xs = set(numbers1)
-    # print(xs.intersection(numbers2))
+    print("\nAfter the first " + str(i) + " nucleotides, the values are:")
+    print("tp = " + str(tp))
+    print("tn = " + str(tn))
+    print("fp = " + str(fp))
+    print("fn = " + str(fn))
+    if(tp == 0 and fn == 0):
+        print("sensitivity = \t" + "undefined")
+    else:
+        print("sensitivity = \t" + str(tp/(tp+fn)))
+    if(fp == 0 and tn == 0):
+        print("specificity = \t" + "undefined")
+    else:
+        print("specificity = \t" + str(tn/(fp+tn)))
+    print("accuracy = \t" + str((tp+tn)/(i+1)))
+
 
 if __name__ == "__main__":
     # try:
@@ -50,4 +83,4 @@ if __name__ == "__main__":
         print(input_file2)
         main()
     # except:
-    #     print('Try:  python3 Robin_Bonkass_Sara_Kemmler_A10.py PAO1_annotation.gff')
+    #     print('Try:  python3 Robin_Bonkass_Sara_Kemmler_A10.py PAO1_annotation.gff Galaxy2-[Prokka_on_data_1__gff].gff3')
