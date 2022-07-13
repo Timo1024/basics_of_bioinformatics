@@ -67,13 +67,13 @@ def printResults(results):
     [tp, fn, fp, tn, sensitivity, specificity, accuracy] = results
 
     print("\nThe calculated values are:")
-    print("tp = " + str(tp))
-    print("tn = " + str(tn))
-    print("fp = " + str(fp))
-    print("fn = " + str(fn))
-    print("sensitivity = \t" + str(sensitivity))
-    print("specificity = \t" + str(specificity))
-    print("accuracy = \t" + str(accuracy))
+    print("\ntp \t\t= " + str(tp))
+    print("tn \t\t= " + str(tn))
+    print("fp \t\t= " + str(fp))
+    print("fn \t\t= " + str(fn))
+    print("\nsensitivity \t= " + str(sensitivity))
+    print("specificity \t= " + str(specificity))
+    print("accuracy \t= " + str(accuracy))
 
 def main():
 
