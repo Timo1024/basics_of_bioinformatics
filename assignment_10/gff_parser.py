@@ -1,6 +1,8 @@
-# TODO comments
 
 def getLines(file):
+    '''
+    gets all important lines from the .gff file
+    '''
     lines = []
     with open(file) as file_content:
         for line in file_content:
@@ -9,6 +11,10 @@ def getLines(file):
     return lines
 
 def getCDSStartEndFromLine(line):
+    '''
+    gets the start and end of an cds from one line if it exists
+    otherwise returns False
+    '''
     line_array = line.strip().split("\t")
     if(len(line_array) >= 3):
         index = 0
@@ -21,11 +27,13 @@ def getCDSStartEndFromLine(line):
         return False
 
 def getAllStartEnd(file):
+    '''
+    gets all start end end points of all existing cds
+    and returns them as an array
+    '''
     all_start_end = []
     lines = getLines(file)
     for i in lines:
-        # print(i)
-        # print(getCDSStartEndFromLine(i))
         if getCDSStartEndFromLine(i) != False:
             all_start_end.append(getCDSStartEndFromLine(i))
     return all_start_end
