@@ -39,6 +39,18 @@ class gffParser:
                     # print("line: " + line)
                     record = line.strip().split("\t")
                     # print(record)
+                    if(len(record[0].split(" ")) > 1):
+                        first_entry = record[0].split(" ")
+                        record[0] = " ".join(first_entry[1:])
+                        record = [first_entry[0]] + record
+                    # print(record)
+                    # record2 = []
+                    # for i in record:
+                    #     record3 = i.strip().split(" ")
+                    #     for j in record3:
+                    #         record2.append(j)
+                    # record = record2
+                    # print(record)
                     sequence_name = record[0]
                     source = record[1]
                     feature = record[2]
@@ -57,6 +69,9 @@ class gffParser:
                     else:
                         frame = None
                     attributes = record[8].split(';')
+                    if(len(attributes) == 1):
+                        attributes = record[8].split(',')
+                    # print(attributes)
                     attributes = {x.split('=')[0]: x.split('=')[1]
                                 for x in attributes if '=' in x}
                     if not(sequence_name in self.data):
@@ -98,7 +113,7 @@ class gffParser:
             A list of dictionaries where each dictionary corresponds to a gene in the sequence.
         """
         genes_list = []
-        print(self.data.keys())
+        # print(self.data.keys())
         chromosome = self.data[Id]
         for x in chromosome:
             if (x['feature'] == 'gene'):
@@ -140,6 +155,7 @@ class gffParser:
             information about an CDS for the transcript.
             """
         cds_list = []
+        # print(self.data.keys())
         for x in self.data[seq_name]:
             # print(x['Parent'])
             if (x['feature'] == 'CDS'):
