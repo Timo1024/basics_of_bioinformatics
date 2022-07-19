@@ -217,9 +217,11 @@ def main():
 
         length = len(dp_matrix)
         pairs = traceback(dp_matrix)
+        amount_basepairs = len(pairs)
         dot_brackets = make_dot_bracket(pairs, length)
 
         print(dot_brackets)
+        print("The number of basepairs is " + str(amount_basepairs))
 
     print("")
 
