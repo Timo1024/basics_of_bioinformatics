@@ -174,14 +174,14 @@ def traceback(matrix):
     while(tracebacks[0] != [0, 0]):
         new_tracebacks = []
         for i in tracebacks:
-            print("i: " + str(i))
+            
             if(
                 len(matrix[i[0]][i[1]][1]) == 1 and 
                 matrix[i[0]][i[1]][1][0][0] == i[0]+1 and
                 matrix[i[0]][i[1]][1][0][1] == i[1]-1
             ):
                 pairs.append([i[0], i[1]])
-            print("pairs: " + str(pairs))
+                
             new_tracebacks += matrix[i[0]][i[1]][1]
         tracebacks = new_tracebacks
 
@@ -190,7 +190,6 @@ def traceback(matrix):
 
 def make_dot_bracket(pairs, length):
     dot_bracket = ["."]*length
-    print(dot_bracket)
     for i in pairs:
         dot_bracket[min(i)] = "("
         dot_bracket[max(i)] = ")"
@@ -209,13 +208,22 @@ def main():
 
     # TODO make nussinov for all sequences
 
-    dp_matrix = compute(headings_sequences[1][0], loop_length)
-    length = len(dp_matrix)
-    pairs = traceback(dp_matrix)
-    dot_brackets = make_dot_bracket(pairs, length)
+    for heading_sequence_index in range(len(headings_sequences[0])):
+        
+        print("")
 
-    print(dot_brackets)
+        sequence = headings_sequences[1][heading_sequence_index]
+        heading  = headings_sequences[0][heading_sequence_index]
 
+        dp_matrix = compute(sequence, loop_length)
+
+        length = len(dp_matrix)
+        pairs = traceback(dp_matrix)
+        dot_brackets = make_dot_bracket(pairs, length)
+
+        print(dot_brackets)
+
+    print("")
 
 
 if __name__ == "__main__":
