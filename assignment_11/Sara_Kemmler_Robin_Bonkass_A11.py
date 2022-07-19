@@ -112,67 +112,59 @@ def compute(a, l):
 
     for n in range(1, L):
         for j in range(n, L):
+
             i = j-n
 
-            # calculate maximum
-            # print("i = " + str(i) + "; j = " + str(j) + "; n = " + str(n))
+            if(j - i > l):
 
-            if(a[i] + a[j] in base_pairs):
-                delta = 1
-            else: 
-                delta = 0
+                # calculate maximum
+                if(a[i] + a[j] in base_pairs):
+                    delta = 1
+                else: 
+                    delta = 0
 
-            # print(a[i] + a[j] + " -> delta = " + str(delta))
+                fourth_entry_array = [0]
+                for k in range(i+1, j):
+                    fourth_entry_array.append(matrix[i][k][0] + matrix[k+1][j][0])
 
-            fourth_entry_array = [0]
-            for k in range(i+1, j):
-                fourth_entry_array.append(matrix[i][k][0] + matrix[k+1][j][0])
+                max_fourth_entry = max(fourth_entry_array)
+                indices_fourth_entry = list(np.where(np.array(fourth_entry_array) == max_fourth_entry)[0])
 
-            max_fourth_entry = max(fourth_entry_array)
-            indices_fourth_entry = list(np.where(np.array(fourth_entry_array) == max_fourth_entry)[0])
+                traceback_fourth_entry = []
+                for index in indices_fourth_entry:
+                    traceback_fourth_entry.append([[i, i+index], [i+index+1, j]])
 
-            traceback_fourth_entry = []
-            for index in indices_fourth_entry:
-                traceback_fourth_entry.append([[i, i+index], [i+index+1, j]])
+                maximum_array = [
+                    matrix[i+1][j][0], 
+                    matrix[i][j-1][0], 
+                    matrix[i+1][j-1][0] + delta,
+                    max_fourth_entry
+                ]
+
+                maximum = max(maximum_array)
+                matrix[i][j][0] = maximum
+
+                # fill Traceback in the matrix
+                indices = list(np.where(np.array(maximum_array) == maximum)[0])
+                traceback = []
+                for index in indices:
+                    if(index == 0):
+                        traceback.append([[i+1, j]])
+                    elif(index == 1):
+                        traceback.append([[i, j-1]])
+                    elif(index == 2):
+                        traceback.append([[i+1, j-1]])
+                    else: # index == 3
+                        traceback += traceback_fourth_entry
+                matrix[i][j][1] = traceback[0] # TODO delete [0] for all tracebacks
+            else:
+                matrix[i][j][0] = 0
+                matrix[i][j][1] = [[0, 0]]
+                
             
-            # print("array: " + str(fourth_entry_array))
-            # print("maximum: " + str(max_fourth_entry))
-            # print("indices: " + str(indices_fourth_entry))
-            # print("tracebacks: " + str(traceback_fourth_entry) + "\n")
-
-
-            # print("max i<k<j = " + str(fourth_entry_array))
-
-            maximum_array = [
-                matrix[i+1][j][0], 
-                matrix[i][j-1][0], 
-                matrix[i+1][j-1][0] + delta,
-                max_fourth_entry
-            ]
-
-            maximum = max(maximum_array)
-            matrix[i][j][0] = maximum
-
-            # fill Traceback in the matrix
-            indices = list(np.where(np.array(maximum_array) == maximum)[0])
-            traceback = []
-            for index in indices:
-                if(index == 0):
-                    traceback.append([[i+1, j]])
-                elif(index == 1):
-                    traceback.append([[i, j-1]])
-                elif(index == 2):
-                    traceback.append([[i+1, j-1]])
-                else: # index == 3
-                    traceback += traceback_fourth_entry
-            matrix[i][j][1] = traceback[0] # TODO delete [0] for all tracebacks
 
     return matrix
 
-
-def traceback_recursion(matrix, index):
-    pass
-        
 
 def traceback(matrix):
     n = len(matrix)
@@ -223,9 +215,6 @@ def main():
     dot_brackets = make_dot_bracket(pairs, length)
 
     print(dot_brackets)
-
-    # print_matrix(dp_matrix, True)
-    # print_matrix(dp_matrix, False)
 
 
 
