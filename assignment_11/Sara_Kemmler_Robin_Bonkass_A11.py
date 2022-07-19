@@ -105,12 +105,10 @@ def compute(a, l):
 
     # initialization of nussinov
     for i in range(1, L):
-        matrix[i][i-1] = [0,[0,0]]
+        matrix[i][i-1] = [0,[[0,0]]]
 
     for i in range(L):
-        matrix[i][i] = [0,[0,0]]
-
-    print_matrix(matrix, full = False)
+        matrix[i][i] = [0,[[0,0]]]
 
     for n in range(1, L):
         for j in range(n, L):
@@ -130,13 +128,26 @@ def compute(a, l):
             for k in range(i+1, j):
                 fourth_entry_array.append(matrix[i][k][0] + matrix[k+1][j][0])
 
+            max_fourth_entry = max(fourth_entry_array)
+            indices_fourth_entry = list(np.where(np.array(fourth_entry_array) == max_fourth_entry)[0])
+
+            traceback_fourth_entry = []
+            for index in indices_fourth_entry:
+                traceback_fourth_entry.append([[i, i+index], [i+index+1, j]])
+            
+            # print("array: " + str(fourth_entry_array))
+            # print("maximum: " + str(max_fourth_entry))
+            # print("indices: " + str(indices_fourth_entry))
+            # print("tracebacks: " + str(traceback_fourth_entry) + "\n")
+
+
             # print("max i<k<j = " + str(fourth_entry_array))
 
             maximum_array = [
                 matrix[i+1][j][0], 
                 matrix[i][j-1][0], 
                 matrix[i+1][j-1][0] + delta,
-                max(fourth_entry_array)
+                max_fourth_entry
             ]
 
             maximum = max(maximum_array)
@@ -144,10 +155,54 @@ def compute(a, l):
 
             # fill Traceback in the matrix
             indices = list(np.where(np.array(maximum_array) == maximum)[0])
-            print(indices)
-
+            traceback = []
+            for index in indices:
+                if(index == 0):
+                    traceback.append([[i+1, j]])
+                elif(index == 1):
+                    traceback.append([[i, j-1]])
+                elif(index == 2):
+                    traceback.append([[i+1, j-1]])
+                else: # index == 3
+                    traceback += traceback_fourth_entry
+            matrix[i][j][1] = traceback[0] # TODO delete [0] for all tracebacks
 
     return matrix
+
+
+def traceback_recursion(matrix, index):
+    pass
+        
+
+def traceback(matrix):
+    n = len(matrix)
+    tracebacks = matrix[0][n-1][1]
+    pairs = []
+
+    while(tracebacks[0] != [0, 0]):
+        new_tracebacks = []
+        for i in tracebacks:
+            print("i: " + str(i))
+            if(
+                len(matrix[i[0]][i[1]][1]) == 1 and 
+                matrix[i[0]][i[1]][1][0][0] == i[0]+1 and
+                matrix[i[0]][i[1]][1][0][1] == i[1]-1
+            ):
+                pairs.append([i[0], i[1]])
+            print("pairs: " + str(pairs))
+            new_tracebacks += matrix[i[0]][i[1]][1]
+        tracebacks = new_tracebacks
+
+    return pairs
+
+
+def make_dot_bracket(pairs, length):
+    dot_bracket = ["."]*length
+    print(dot_bracket)
+    for i in pairs:
+        dot_bracket[min(i)] = "("
+        dot_bracket[max(i)] = ")"
+    return "".join(dot_bracket) 
 
 
 def main():
@@ -163,8 +218,14 @@ def main():
     # TODO make nussinov for all sequences
 
     dp_matrix = compute(headings_sequences[1][0], loop_length)
+    length = len(dp_matrix)
+    pairs = traceback(dp_matrix)
+    dot_brackets = make_dot_bracket(pairs, length)
 
-    print_matrix(dp_matrix, False)
+    print(dot_brackets)
+
+    # print_matrix(dp_matrix, True)
+    # print_matrix(dp_matrix, False)
 
 
 
@@ -172,7 +233,7 @@ if __name__ == "__main__":
     # try:
         args = create_parser()
         
-        # accesing the arguments of argparse
+        # accessing the arguments of argparse
         print("fasta file: " + args.file)
         print("minimal length for a loop: " + str(args.length))
 
