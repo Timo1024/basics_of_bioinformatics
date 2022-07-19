@@ -86,10 +86,6 @@ def compute(a, l):
       in this matrix the traceback is included
     '''
 
-    print(a)
-
-    # TODO traceback
-
     #  canonical base pairs
     base_pairs = ["AU", "UA", "GC", "CG"]
 
@@ -212,8 +208,10 @@ def main():
         
         print("")
 
-        sequence = headings_sequences[1][heading_sequence_index]
         heading  = headings_sequences[0][heading_sequence_index]
+        sequence = headings_sequences[1][heading_sequence_index]
+        print(heading)
+        print(sequence)
 
         dp_matrix = compute(sequence, loop_length)
 
