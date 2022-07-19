@@ -164,6 +164,8 @@ def make_traceback(matrix, pairs, index, tracebacks, all_pairs):
 
         # get tracebacks for current traceback
         for traceback in tracebacks:
+
+            # calc if pair
             for i in traceback:
                 new_tracebacks = []
 
@@ -172,8 +174,9 @@ def make_traceback(matrix, pairs, index, tracebacks, all_pairs):
                     matrix[i[0]][i[1]][1][0][0][0] == i[0]+1 and
                     matrix[i[0]][i[1]][1][0][0][1] == i[1]-1
                 ):
-                    pairs[index].append([i[0], i[1]])
-                print("pairs: " + str(pairs))
+                    print("pairs before: " + str(pairs[index]))
+                    pairs.append([i[0], i[1]])
+                    print("pairs after: " + str(pairs[index]))
                 new_tracebacks += matrix[i[0]][i[1]][1]
 
             # all_pairs.append(pairs)
@@ -182,7 +185,8 @@ def make_traceback(matrix, pairs, index, tracebacks, all_pairs):
             
             # print(all_pairs[index])
             index += 1
-            pairs.append(make_traceback(matrix, pairs, index, new_tracebacks, all_pairs))
+            pairs.append([])
+            pairs[index] = make_traceback(matrix, pairs, index, new_tracebacks, all_pairs)
 
             # tracebacks = new_tracebacks
 
@@ -218,7 +222,7 @@ def main():
 
         n = len(dp_matrix)
         # tracebacks = dp_matrix[0][n-1][1]
-        pairs = make_traceback(dp_matrix, [], 0, [[[0, n-1]]], [])
+        pairs = make_traceback(dp_matrix, [[]], 0, [[[0, n-1]]], [])
 
         length = len(dp_matrix)
         dot_brackets = []
