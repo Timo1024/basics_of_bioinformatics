@@ -5,6 +5,7 @@ Sara Kemmler
 '''
 
 import argparse
+import numpy as np
 
 def create_parser():
     '''
@@ -116,23 +117,32 @@ def compute(a, l):
             i = j-n
 
             # calculate maximum
-            print("i = " + str(i) + "; j = " + str(j) + "; n = " + str(n))
+            # print("i = " + str(i) + "; j = " + str(j) + "; n = " + str(n))
 
             if(a[i] + a[j] in base_pairs):
                 delta = 1
             else: 
                 delta = 0
 
-            print(a[i] + a[j] + " -> delta = " + str(delta))
+            # print(a[i] + a[j] + " -> delta = " + str(delta))
 
-            maximum = max(
+            fourth_entry_array = [0]
+            for k in range(i+1, j):
+                fourth_entry_array.append(matrix[i][k][0] + matrix[k+1][j][0])
+
+            # print("max i<k<j = " + str(fourth_entry_array))
+
+            maximum_array = [
                 matrix[i+1][j][0], 
                 matrix[i][j-1][0], 
                 matrix[i+1][j-1][0] + delta,
-                max(
-                    -1, -1 # TODO
-                )
-            )
+                max(fourth_entry_array)
+            ]
+
+            maximum = max(maximum_array)
+
+            indices = list(np.where(np.array(maximum_array) == maximum)[0])
+            print(indices)
 
             matrix[i][j][0] = maximum
 
