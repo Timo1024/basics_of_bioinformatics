@@ -140,11 +140,12 @@ def compute(a, l):
             ]
 
             maximum = max(maximum_array)
+            matrix[i][j][0] = maximum
 
+            # fill Traceback in the matrix
             indices = list(np.where(np.array(maximum_array) == maximum)[0])
             print(indices)
 
-            matrix[i][j][0] = maximum
 
     return matrix
 
