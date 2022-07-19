@@ -5,6 +5,7 @@ Sara Kemmler
 '''
 
 import argparse
+from msilib import sequence
 import numpy as np
 
 def create_parser():
@@ -72,11 +73,10 @@ def extract_headings_sequences(file):
     return [heading_array, sequence_array]
 
 
-def compute(a, l):
+def compute(a):
     '''
     input:
-    - the one sequences a,
-    - a score for the minimal count of a loop
+    - the one sequences a
 
     processing:
     - computes the dynamic programming matrix with the Nussinov algorithm
@@ -86,9 +86,7 @@ def compute(a, l):
       in this matrix the traceback is included
     '''
 
-    print(a)
-
-    # TODO traceback
+    print("Computing dp matrix for sequence: " + a)
 
     #  canonical base pairs
     base_pairs = ["AU", "UA", "GC", "CG"]
@@ -105,24 +103,20 @@ def compute(a, l):
 
     # initialization of nussinov
     for i in range(1, L):
-        matrix[i][i-1] = [0,[[0,0]]]
+        matrix[i][i-1] = [0,[[[0,0]]]]
 
     for i in range(L):
-        matrix[i][i] = [0,[[0,0]]]
+        matrix[i][i] = [0,[[[0,0]]]]
 
     for n in range(1, L):
         for j in range(n, L):
             i = j-n
 
             # calculate maximum
-            # print("i = " + str(i) + "; j = " + str(j) + "; n = " + str(n))
-
             if(a[i] + a[j] in base_pairs):
                 delta = 1
             else: 
                 delta = 0
-
-            # print(a[i] + a[j] + " -> delta = " + str(delta))
 
             fourth_entry_array = [0]
             for k in range(i+1, j):
@@ -134,14 +128,6 @@ def compute(a, l):
             traceback_fourth_entry = []
             for index in indices_fourth_entry:
                 traceback_fourth_entry.append([[i, i+index], [i+index+1, j]])
-            
-            # print("array: " + str(fourth_entry_array))
-            # print("maximum: " + str(max_fourth_entry))
-            # print("indices: " + str(indices_fourth_entry))
-            # print("tracebacks: " + str(traceback_fourth_entry) + "\n")
-
-
-            # print("max i<k<j = " + str(fourth_entry_array))
 
             maximum_array = [
                 matrix[i+1][j][0], 
@@ -165,33 +151,40 @@ def compute(a, l):
                     traceback.append([[i+1, j-1]])
                 else: # index == 3
                     traceback += traceback_fourth_entry
-            matrix[i][j][1] = traceback[0] # TODO delete [0] for all tracebacks
+            matrix[i][j][1] = traceback
 
     return matrix
-
-
-def traceback_recursion(matrix, index):
-    pass
         
 
-def traceback(matrix):
-    n = len(matrix)
-    tracebacks = matrix[0][n-1][1]
-    pairs = []
+def make_traceback(matrix, pairs, index, tracebacks, all_pairs):
 
-    while(tracebacks[0] != [0, 0]):
-        new_tracebacks = []
-        for i in tracebacks:
-            print("i: " + str(i))
-            if(
-                len(matrix[i[0]][i[1]][1]) == 1 and 
-                matrix[i[0]][i[1]][1][0][0] == i[0]+1 and
-                matrix[i[0]][i[1]][1][0][1] == i[1]-1
-            ):
-                pairs.append([i[0], i[1]])
-            print("pairs: " + str(pairs))
-            new_tracebacks += matrix[i[0]][i[1]][1]
-        tracebacks = new_tracebacks
+    print("tracebacks: " + str(tracebacks))
+
+    if(not (len(tracebacks) == 1 and tracebacks[0][0] == [0, 0])):
+
+        # get tracebacks for current traceback
+        for traceback in tracebacks:
+            for i in traceback:
+                new_tracebacks = []
+
+                if(
+                    len(matrix[i[0]][i[1]][1]) == 1 and 
+                    matrix[i[0]][i[1]][1][0][0][0] == i[0]+1 and
+                    matrix[i[0]][i[1]][1][0][0][1] == i[1]-1
+                ):
+                    pairs[index].append([i[0], i[1]])
+                print("pairs: " + str(pairs))
+                new_tracebacks += matrix[i[0]][i[1]][1]
+
+            # all_pairs.append(pairs)
+            # print("new_tracebacks" + str(new_tracebacks))
+            # print("all_pairs" + str(all_pairs))
+            
+            # print(all_pairs[index])
+            index += 1
+            pairs.append(make_traceback(matrix, pairs, index, new_tracebacks, all_pairs))
+
+            # tracebacks = new_tracebacks
 
     return pairs
 
@@ -214,15 +207,25 @@ def main():
     loop_length = args.length
 
     headings_sequences = extract_headings_sequences(file)
-
+    print(headings_sequences)
     # TODO make nussinov for all sequences
+    for heading_sequence_index in range(len(headings_sequences[0])):
 
-    dp_matrix = compute(headings_sequences[1][0], loop_length)
-    length = len(dp_matrix)
-    pairs = traceback(dp_matrix)
-    dot_brackets = make_dot_bracket(pairs, length)
+        sequence = headings_sequences[1][heading_sequence_index]
+        heading  = headings_sequences[0][heading_sequence_index]
 
-    print(dot_brackets)
+        dp_matrix = compute(sequence)
+
+        n = len(dp_matrix)
+        # tracebacks = dp_matrix[0][n-1][1]
+        pairs = make_traceback(dp_matrix, [], 0, [[[0, n-1]]], [])
+
+        length = len(dp_matrix)
+        dot_brackets = []
+        for pair_array in pairs:
+            dot_brackets.append(make_dot_bracket(pair_array, length))
+
+        print(dot_brackets)
 
     # print_matrix(dp_matrix, True)
     # print_matrix(dp_matrix, False)
