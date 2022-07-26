@@ -156,13 +156,14 @@ def compute(a, l):
             else:
                 matrix[i][j][0] = 0
                 matrix[i][j][1] = [[0, 0]]
-                
-            
-
+             
     return matrix
 
 
 def traceback(matrix):
+    """
+    returns all nucleotide pairs for one traceback
+    """
     n = len(matrix)
     tracebacks = matrix[0][n-1][1]
     pairs = []
@@ -185,6 +186,10 @@ def traceback(matrix):
 
 
 def make_dot_bracket(pairs, length):
+    """
+    input: nucleotide pairs
+    output: dot-bracket notation
+    """
     dot_bracket = ["."]*length
     for i in pairs:
         dot_bracket[min(i)] = "("
@@ -202,8 +207,6 @@ def main():
 
     headings_sequences = extract_headings_sequences(file)
 
-    # TODO make nussinov for all sequences
-
     for heading_sequence_index in range(len(headings_sequences[0])):
         
         print("")
@@ -217,17 +220,19 @@ def main():
 
         length = len(dp_matrix)
         pairs = traceback(dp_matrix)
-        amount_basepairs = len(pairs)
         dot_brackets = make_dot_bracket(pairs, length)
 
         print(dot_brackets)
-        print("The number of basepairs is " + str(amount_basepairs))
+
+        # get maximum amount of base pairs
+        amount_basepairs = dp_matrix[0][length-1][0]
+        print("The maximum number of basepairs is " + str(amount_basepairs))
 
     print("")
 
 
 if __name__ == "__main__":
-    # try:
+    try:
         args = create_parser()
         
         # accessing the arguments of argparse
@@ -235,5 +240,5 @@ if __name__ == "__main__":
         print("minimal length for a loop: " + str(args.length))
 
         main()
-    # except:
-    #     print('Try:  python3 Sara_Kemmler_Robin_Bonkass_A11.py -f nussinov.fasta -l 3')
+    except:
+        print('Try:  python3 Sara_Kemmler_Robin_Bonkass_A11.py -f nussinov.fasta -l 3')
