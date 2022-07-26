@@ -107,7 +107,7 @@ def main():
 
 
 if __name__ == "__main__":
-    # try:
+    try:
         args = create_parser()
         
         # accessing the arguments of argparse
@@ -116,5 +116,5 @@ if __name__ == "__main__":
         print("Proteus2 prediction: " + args.fileProteus2)
 
         main()
-    # except:
-    #     print('Try:  python3 Sara_Kemmler_Robin_Bonkass_A12.py -ftrue trueSecStructure.txt -fphd secStructure_PHD.txt -fproteus2 secStructure_proteus.txt')
+    except:
+        print('Try:  python3 Sara_Kemmler_Robin_Bonkass_A12.py -ftrue trueSecStructure.txt -fphd secStructure_PHD.txt -fproteus2 secStructure_proteus.txt')
